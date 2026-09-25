@@ -23,7 +23,6 @@ public class Bee : MonoBehaviour
     public Transform TargetDog { get; private set; }
     public Rigidbody2D Rb { get; private set; }
 
-    // Các thuộc tính mới cho logic tấn công khoảng trống
     public bool IsGapAttacker { get; set; }
     public bool HasReachedGap { get; set; }
     public Vector3 GapTarget { get; set; }
@@ -110,6 +109,23 @@ public class Bee : MonoBehaviour
             {
                 Vector2 hitNormal = collision.contacts[0].normal;
                 BeeManager.Instance.BeeHitWall(this, hitNormal, 3f);
+            }
+        }
+    }
+
+
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (CurrentState == BeeState.Normal)
+            return;
+
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            if (collision.contacts.Length > 0)
+            {
+                Vector2 hitNormal = collision.contacts[0].normal;
+                BeeManager.Instance.BeeHitWall(this, hitNormal, 1f);
             }
         }
     }

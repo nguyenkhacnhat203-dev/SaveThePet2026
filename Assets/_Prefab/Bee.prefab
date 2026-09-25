@@ -95,8 +95,8 @@ GameObject:
   - component: {fileID: 616975614933616194}
   - component: {fileID: 4379585378879135918}
   - component: {fileID: 4966732933943799744}
-  - component: {fileID: 5162758087170815332}
   - component: {fileID: 8347474677912424282}
+  - component: {fileID: 9185576724351093006}
   m_Layer: 6
   m_Name: Bee
   m_TagString: Bee
@@ -185,8 +185,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30f41579a3ff5574aa32a2768ef1d0e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!61 &5162758087170815332
-BoxCollider2D:
+--- !u!50 &8347474677912424282
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172191781234666455}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!70 &9185576724351093006
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -217,46 +244,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.06459871, y: -0.0408715}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.06, y: 0.61}
-    newSize: {x: 1.06, y: 0.61}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.2248299, y: 0.5160154}
-  m_EdgeRadius: 0
---- !u!50 &8347474677912424282
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2172191781234666455}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Offset: {x: -0.044574276, y: -0.06739241}
+  m_Size: {x: 1.1307756, y: 0.50687015}
+  m_Direction: 1
 --- !u!1 &4210278787460284464
 GameObject:
   m_ObjectHideFlags: 0

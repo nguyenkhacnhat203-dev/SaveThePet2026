@@ -120,7 +120,7 @@ public class BeeManager : Singleton<BeeManager>
         if (dogScript != null && dogScript.DogCollider != null)
         {
             Bounds bounds = dogScript.DogCollider.bounds;
-            float thresholdY = bounds.min.y + (bounds.size.y * 0.4f);
+            float thresholdY = bounds.min.y + (bounds.size.y * 0.05f);
 
             float localX = Random.Range(bounds.min.x + 0.1f, bounds.max.x - 0.1f) - bee.TargetDog.position.x;
             float localY = Random.Range(thresholdY, bounds.max.y - 0.1f) - bee.TargetDog.position.y;
@@ -265,19 +265,19 @@ public class BeeManager : Singleton<BeeManager>
         bee.StartKnockBack();
     }
 
-    public void BeeHitWall(Bee bee, Vector2 hitNormal, float horizontalBounce = 4f)
+    public void BeeHitWall(Bee bee, Vector2 hitNormal, float horizontalBounce = 1f)
     {
         if (bee == null) return;
 
-        bee.Rb.position += hitNormal * 0.05f;
+        bee.Rb.position += hitNormal * 0.15f;
 
-        Vector3 bounceDirection = (Vector3)hitNormal;
-        bounceDirection.Normalize();
+        Vector3 bounceDirection = (Vector3)hitNormal.normalized;
 
         Vector3 newKnockBackTarget = bee.transform.position + bounceDirection * knockBackDistance;
 
-        float offsetX = (Random.value < 0.5f) ? -horizontalBounce : horizontalBounce;
-        newKnockBackTarget.x += offsetX;
+        Vector2 tangent = new Vector2(-hitNormal.y, hitNormal.x);
+        float sideOffset = (Random.value < 0.5f ? -1f : 1f) * horizontalBounce;
+        newKnockBackTarget += (Vector3)(tangent * sideOffset);
 
         bee.SetAttackTarget(newKnockBackTarget);
         bee.StartKnockBack();

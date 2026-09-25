@@ -144,6 +144,7 @@ public class DrawWall : MonoBehaviour
 
         if (rigidbody == null)
             rigidbody = wall.AddComponent<Rigidbody2D>();
+         rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
 
         CreatePolygon(polygonCollider);
