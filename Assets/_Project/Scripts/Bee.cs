@@ -121,11 +121,13 @@ public class Bee : MonoBehaviour
             return;
 
         if (collision.gameObject.CompareTag("Wall"))
+            Debug.Log("Gọi");
+
         {
             if (collision.contacts.Length > 0)
             {
                 Vector2 hitNormal = collision.contacts[0].normal;
-                BeeManager.Instance.BeeHitWall(this, hitNormal, 1f);
+                BeeManager.Instance.BeeHitWall(this, hitNormal, 2f);
             }
         }
     }

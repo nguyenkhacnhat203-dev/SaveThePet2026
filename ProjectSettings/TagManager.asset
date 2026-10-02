@@ -53,3 +53,6 @@ TagManager:
   - name: WingBee
     uniqueID: 4144045315
     locked: 0
+  - name: Dog
+    uniqueID: 4092129491
+    locked: 0

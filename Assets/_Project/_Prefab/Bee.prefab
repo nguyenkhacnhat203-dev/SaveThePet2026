@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4379585378879135918}
   - component: {fileID: 4966732933943799744}
   - component: {fileID: 8347474677912424282}
-  - component: {fileID: 9185576724351093006}
+  - component: {fileID: 2884379567239866286}
   m_Layer: 6
   m_Name: Bee
   m_TagString: Bee
@@ -210,10 +210,10 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
---- !u!70 &9185576724351093006
-CapsuleCollider2D:
+--- !u!61 &2884379567239866286
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -244,9 +244,19 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.044574276, y: -0.06739241}
-  m_Size: {x: 1.1307756, y: 0.50687015}
-  m_Direction: 1
+  m_Offset: {x: -0.049586236, y: -0.055196524}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.06, y: 0.61}
+    newSize: {x: 1.06, y: 0.61}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.1267039, y: 0.49960697}
+  m_EdgeRadius: 0
 --- !u!1 &4210278787460284464
 GameObject:
   m_ObjectHideFlags: 0
