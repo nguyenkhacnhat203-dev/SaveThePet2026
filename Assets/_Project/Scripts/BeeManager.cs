@@ -168,6 +168,11 @@ public class BeeManager : Singleton<BeeManager>
 
         AssignAttackTarget(bee);
         bee.StartAttack();
+
+        Dog dog = bee.TargetDog.GetComponent<Dog>();
+
+        if (dog != null)
+            dog.StartPanic();
     }
 
     private void StartNextAttack(Bee bee)
@@ -252,8 +257,16 @@ public class BeeManager : Singleton<BeeManager>
     {
         if (bee == null || bee.TargetDog == null) return;
 
+        Dog dog = bee.TargetDog.GetComponent<Dog>();
+
+        if (dog != null)
+            dog.StartPain();
+
         Vector3 direction = bee.transform.position - bee.TargetDog.position;
-        if (direction.sqrMagnitude <= 0.001f) direction = Vector3.up;
+
+        if (direction.sqrMagnitude <= 0.001f)
+            direction = Vector3.up;
+
         direction.Normalize();
 
         Vector3 knockBackTarget = bee.transform.position + direction * knockBackDistance;

@@ -7,6 +7,7 @@ TagManager:
   - Wall
   - Dog
   - Bee
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -44,6 +45,21 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BG
+    uniqueID: 3710670539
+    locked: 0
+  - name: BgCanvas
+    uniqueID: 3335625771
+    locked: 0
+  - name: Wall
+    uniqueID: 377711923
+    locked: 0
+  - name: 'Environment '
+    uniqueID: 1939027023
+    locked: 0
+  - name: Hive
+    uniqueID: 2558235673
+    locked: 0
   - name: Bee
     uniqueID: 2156571869
     locked: 0
@@ -55,4 +71,7 @@ TagManager:
     locked: 0
   - name: Dog
     uniqueID: 4092129491
+    locked: 0
+  - name: UiManager
+    uniqueID: 2759263645
     locked: 0

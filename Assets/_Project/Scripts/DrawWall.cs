@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System; 
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DrawWall : MonoBehaviour
 {
+    public static event Action OnWallDrawn;
+
     [SerializeField] private float minPointDistance = 0.05f;
     [SerializeField] private float maxLength = 8f;
     [SerializeField] private float lineWidth = 0.2f;
@@ -53,6 +56,7 @@ public class DrawWall : MonoBehaviour
         currentLength = 0f;
 
         points.Clear();
+        UiManager.Instance.ResetHealthBar();
 
         Vector3 worldPosition = ScreenToWorld(screenPosition);
 
@@ -93,6 +97,11 @@ public class DrawWall : MonoBehaviour
                 currentLength = maxLength;
 
                 UpdateLine();
+
+                UiManager.Instance.UpdateHealthBar(
+                    currentLength,
+                    maxLength
+                );
             }
 
             return;
@@ -103,7 +112,13 @@ public class DrawWall : MonoBehaviour
         currentLength += distance;
 
         UpdateLine();
+
+        UiManager.Instance.UpdateHealthBar(
+            currentLength,
+            maxLength
+        );
     }
+
 
     public void StopDrawing()
     {
@@ -144,10 +159,12 @@ public class DrawWall : MonoBehaviour
 
         if (rigidbody == null)
             rigidbody = wall.AddComponent<Rigidbody2D>();
-         rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-
+        rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         CreatePolygon(polygonCollider);
+
+        // Kích hoạt Action thông báo tường đã vẽ xong
+        OnWallDrawn?.Invoke();
 
         GamePlayManager.Instance.OnWallCreated(wall);
     }
