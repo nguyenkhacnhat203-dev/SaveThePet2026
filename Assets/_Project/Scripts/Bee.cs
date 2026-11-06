@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 public enum BeeState
 {
@@ -32,10 +33,9 @@ public class Bee : MonoBehaviour
     private void Awake()
     {
         Rb = GetComponent<Rigidbody2D>();
+
         if (Rb == null)
-        {
             Rb = gameObject.AddComponent<Rigidbody2D>();
-        }
 
         Rb.gravityScale = 0f;
         Rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
@@ -45,7 +45,7 @@ public class Bee : MonoBehaviour
     public void Initialize(Vector3 spawnPosition, float randomRadius, Transform targetDog)
     {
         this.spawnPosition = spawnPosition;
-        this.TargetDog = targetDog;
+        TargetDog = targetDog;
 
         RandomTime = 0f;
         SetState(BeeState.Normal);
@@ -101,6 +101,9 @@ public class Bee : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent<Dog>(out Dog dog))
         {
+            if (dog.transform != TargetDog)
+                return;
+
             BeeManager.Instance.BeeHitDog(this, 2f);
         }
         else if (collision.gameObject.CompareTag("Wall"))
@@ -113,16 +116,12 @@ public class Bee : MonoBehaviour
         }
     }
 
-
-
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (CurrentState == BeeState.Normal)
             return;
 
         if (collision.gameObject.CompareTag("Wall"))
-            Debug.Log("Gọi");
-
         {
             if (collision.contacts.Length > 0)
             {

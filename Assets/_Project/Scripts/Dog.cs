@@ -79,17 +79,21 @@ public class Dog : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!collision.gameObject.CompareTag("Bee"))
+        if (!collision.gameObject.TryGetComponent<Bee>(out Bee bee))
+            return;
+
+        if (bee.TargetDog != transform)
             return;
 
         StartPain();
 
-        if (collision.contacts.Length == 0)
+        if (collision.contacts.Length == 0 || DogCollider == null)
             return;
 
         Vector2 contactPoint = collision.contacts[0].point;
 
         Bounds bounds = DogCollider.bounds;
+
         float midY = bounds.center.y;
 
         if (contactPoint.y < midY)
@@ -104,11 +108,19 @@ public class Dog : MonoBehaviour
 
         float actualForce = maxForce * (1f - heightRatio);
 
-        float directionX = contactPoint.x > bounds.center.x ? -1f : 1f;
+        float directionX =
+            contactPoint.x > bounds.center.x ? -1f : 1f;
 
-        Vector2 pushForce = new Vector2(directionX * actualForce, 0f);
+        Vector2 pushForce = new Vector2(
+            directionX * actualForce,
+            0f
+        );
 
         if (rb != null)
-            rb.AddForceAtPosition(pushForce, contactPoint, ForceMode2D.Impulse);
+            rb.AddForceAtPosition(
+                pushForce,
+                contactPoint,
+                ForceMode2D.Impulse
+            );
     }
 }

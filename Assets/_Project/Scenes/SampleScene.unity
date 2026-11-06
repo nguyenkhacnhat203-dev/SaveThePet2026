@@ -685,7 +685,7 @@ RectTransform:
   m_Father: {fileID: 1957066343}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
@@ -1337,7 +1337,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &689541678
 Transform:
   m_ObjectHideFlags: 0
@@ -1480,7 +1480,7 @@ RectTransform:
   m_Father: {fileID: 1957066343}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
@@ -2682,7 +2682,7 @@ RectTransform:
   m_Father: {fileID: 1957066343}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
@@ -2927,7 +2927,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1298331568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3339,7 +3339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1485367039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4109,7 +4109,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1874461065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4231,14 +4231,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 135666876855631985, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 422290283400646907, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2138928356354913095, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4279,37 +4271,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2470994802798458871, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3080450139348994494, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.538
-      objectReference: {fileID: 0}
-    - target: {fileID: 3080450139348994494, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.86147666
-      objectReference: {fileID: 0}
-    - target: {fileID: 3080450139348994494, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.5077973
-      objectReference: {fileID: 0}
-    - target: {fileID: 3080450139348994494, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -61.034
-      objectReference: {fileID: 0}
     - target: {fileID: 3625847860699759074, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
       propertyPath: m_Name
       value: Dog
       objectReference: {fileID: 0}
-    - target: {fileID: 4810982475044389378, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
+    - target: {fileID: 3625847860699759074, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5374672775750502295, guid: cb0038d469aa88a4097d727be2bb7d9a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4579,7 +4547,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1957066340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4936,10 +4904,10 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 1853511093}
+  - {fileID: 637774230}
   - {fileID: 1874461066}
   - {fileID: 1957066343}
   - {fileID: 1298331571}
-  - {fileID: 637774230}
   - {fileID: 1485367041}
   - {fileID: 689541678}
   - {fileID: 1885756411}

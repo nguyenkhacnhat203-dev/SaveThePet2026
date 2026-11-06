@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿
+using System.Collections.Generic;
+using UnityEngine;
 
 public class BeeSpawn : MonoBehaviour
 {
     [SerializeField] private GameObject beePrefab;
     [SerializeField] private Transform spawnPoint;
 
-    [SerializeField] private Transform targetDog;
+    [SerializeField] private List<Transform> targetDogs = new List<Transform>();
 
     [SerializeField] private int beeCount = 10;
     [SerializeField] private float totalSpawnTime = 1f;
@@ -19,19 +21,23 @@ public class BeeSpawn : MonoBehaviour
     {
         if (beePrefab == null)
         {
-            Debug.LogError("BeeSpawn: Bee Prefab chưa được gán.");
             return;
         }
 
         if (spawnPoint == null)
         {
-            Debug.LogError("BeeSpawn: Spawn Point chưa được gán.");
             return;
         }
 
-        if (targetDog == null)
+        if (targetDogs == null || targetDogs.Count == 0)
         {
-            Debug.LogError("BeeSpawn: Target Dog chưa được gán.");
+            return;
+        }
+
+        targetDogs.RemoveAll(dog => dog == null);
+
+        if (targetDogs.Count == 0)
+        {
             return;
         }
 
@@ -71,21 +77,21 @@ public class BeeSpawn : MonoBehaviour
             beePrefab,
             spawnPoint.position,
             Quaternion.identity,
-            transform 
+            transform
         );
 
         Bee bee = beeObject.GetComponent<Bee>();
 
         if (bee == null)
         {
-            Debug.LogError("Bee Prefab không có component Bee.");
+            Destroy(beeObject);
             return;
         }
 
         BeeManager.Instance.RegisterBee(
             bee,
             spawnPoint.position,
-            targetDog
+            targetDogs
         );
     }
 }
