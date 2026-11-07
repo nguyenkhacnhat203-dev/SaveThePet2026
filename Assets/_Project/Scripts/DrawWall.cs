@@ -1,4 +1,4 @@
-﻿using System; 
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,13 +52,16 @@ public class DrawWall : MonoBehaviour
         if (isDrawing)
             return;
 
+        Vector3 worldPosition = ScreenToWorld(screenPosition);
+
+        if (IsBlockedByCollider(worldPosition))
+            return;
+
         isDrawing = true;
         currentLength = 0f;
 
         points.Clear();
         UiManager.Instance.ResetHealthBar();
-
-        Vector3 worldPosition = ScreenToWorld(screenPosition);
 
         points.Add(worldPosition);
 
@@ -72,8 +75,13 @@ public class DrawWall : MonoBehaviour
             return;
 
         Vector3 worldPosition = ScreenToWorld(screenPosition);
-
         Vector3 lastPoint = points[points.Count - 1];
+
+  
+        if (IsPathBlocked(lastPoint, worldPosition))
+        {
+            return; 
+        }
 
         float distance = Vector3.Distance(lastPoint, worldPosition);
 
@@ -92,16 +100,19 @@ public class DrawWall : MonoBehaviour
                 worldPosition =
                     lastPoint + direction * remaining;
 
-                points.Add(worldPosition);
+                if (!IsPathBlocked(lastPoint, worldPosition))
+                {
+                    points.Add(worldPosition);
 
-                currentLength = maxLength;
+                    currentLength = maxLength;
 
-                UpdateLine();
+                    UpdateLine();
 
-                UiManager.Instance.UpdateHealthBar(
-                    currentLength,
-                    maxLength
-                );
+                    UiManager.Instance.UpdateHealthBar(
+                        currentLength,
+                        maxLength
+                    );
+                }
             }
 
             return;
@@ -119,6 +130,43 @@ public class DrawWall : MonoBehaviour
         );
     }
 
+    private bool IsBlockedByCollider(Vector2 worldPosition)
+    {
+        Collider2D hit = Physics2D.OverlapPoint(worldPosition);
+
+        if (hit != null)
+        {
+            if (hit.CompareTag("Dog") || hit.CompareTag("Bee"))
+            {
+                return true;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsPathBlocked(Vector2 startPoint, Vector2 endPoint)
+    {
+        if (IsBlockedByCollider(endPoint))
+            return true;
+
+        RaycastHit2D[] hits = Physics2D.LinecastAll(startPoint, endPoint);
+
+        foreach (var hit in hits)
+        {
+            if (hit.collider != null)
+            {
+                if (hit.collider.CompareTag("Dog") || hit.collider.CompareTag("Bee"))
+                {
+                    continue; 
+                }
+                return true; 
+            }
+        }
+
+        return false;
+    }
 
     public void StopDrawing()
     {
@@ -163,7 +211,6 @@ public class DrawWall : MonoBehaviour
 
         CreatePolygon(polygonCollider);
 
-        // Kích hoạt Action thông báo tường đã vẽ xong
         OnWallDrawn?.Invoke();
 
         GamePlayManager.Instance.OnWallCreated(wall);

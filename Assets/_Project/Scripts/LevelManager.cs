@@ -1,6 +1,6 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Collections; 
 
 public class LevelManager : Singleton<LevelManager>
 {
@@ -13,6 +13,7 @@ public class LevelManager : Singleton<LevelManager>
     private float checkingTimer;
     private bool wasChecking;
     private bool isFailing;
+    private bool isCheckingFinished;
     private int lastDisplayedTime = -1;
 
     public int CurrentLevel { get; private set; }
@@ -32,7 +33,7 @@ public class LevelManager : Singleton<LevelManager>
 
         wasChecking = isChecking;
 
-        if (isChecking && !isFailing)
+        if (isChecking && !isFailing && !isCheckingFinished)
             UpdateChecking();
     }
 
@@ -62,6 +63,7 @@ public class LevelManager : Singleton<LevelManager>
     private void StartChecking()
     {
         isFailing = false;
+        isCheckingFinished = false;
         checkingTimer = checkingDuration;
         lastDisplayedTime = -1;
 
@@ -82,7 +84,17 @@ public class LevelManager : Singleton<LevelManager>
         UpdateCheckingTimeDisplay();
 
         if (checkingTimer <= 0f)
-            CheckResult();
+        {
+            isCheckingFinished = true; 
+
+            StartCoroutine(WaitAndCheckResult(0.5f));
+        }
+    }
+
+    private IEnumerator WaitAndCheckResult(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        CheckResult();
     }
 
     private bool HasDogBeenHit()
@@ -118,7 +130,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private void UpdateCheckingTimeDisplay()
     {
-        int displayedTime = Mathf.CeilToInt(checkingTimer);
+        int displayedTime = Mathf.Max(0, Mathf.CeilToInt(checkingTimer));
 
         if (displayedTime == lastDisplayedTime)
             return;
@@ -152,6 +164,16 @@ public class LevelManager : Singleton<LevelManager>
             dog.StartSatisfied();
         }
 
-        GameManager.Instance.ChangeState(GameManager.GameState.Win);
+        StartWinSequence();
+    }
+
+    private void StartWinSequence()
+    {
+        UiManager.Instance.HideCheckingTime();
+
+        UiManager.Instance.PlayWinCheckmarkAnimation(() =>
+        {
+            GameManager.Instance.ChangeState(GameManager.GameState.Win);
+        });
     }
 }

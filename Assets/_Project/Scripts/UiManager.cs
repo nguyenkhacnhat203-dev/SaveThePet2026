@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
@@ -12,9 +11,11 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private TMP_Text checkingTimeText;
     [SerializeField] private RectTransform clockRectTransform;
     [SerializeField] private RectTransform loseX;
+    [SerializeField] private RectTransform winCheckmark;
 
     private Coroutine clockShakeCoroutine;
     private Coroutine loseXCoroutine;
+    private Coroutine winCheckmarkCoroutine;
 
     private void Start()
     {
@@ -24,6 +25,12 @@ public class UiManager : Singleton<UiManager>
         {
             loseX.gameObject.SetActive(false);
             loseX.localScale = Vector3.one;
+        }
+
+        if (winCheckmark != null)
+        {
+            winCheckmark.gameObject.SetActive(false);
+            winCheckmark.localScale = Vector3.one;
         }
     }
 
@@ -100,7 +107,7 @@ public class UiManager : Singleton<UiManager>
 
     private IEnumerator ClockShakeRoutine()
     {
-        float duration = 0.5f;
+        float duration = 0.5f; 
         float elapsed = 0f;
         Quaternion originalRotation = clockRectTransform.localRotation;
         float shakeAngle = 15f;
@@ -137,6 +144,7 @@ public class UiManager : Singleton<UiManager>
             clockRectTransform.gameObject.SetActive(false);
     }
 
+    // --- ANIMATION DẤU X KHI THUA ---
     public void PlayLoseXAnimation(Action onComplete)
     {
         HideCheckingTime();
@@ -186,5 +194,56 @@ public class UiManager : Singleton<UiManager>
         }
 
         loseX.localScale = targetScale;
+    }
+
+    public void PlayWinCheckmarkAnimation(Action onComplete)
+    {
+        HideCheckingTime();
+
+        if (winCheckmarkCoroutine != null)
+            StopCoroutine(winCheckmarkCoroutine);
+
+        if (winCheckmark == null)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
+        winCheckmark.gameObject.SetActive(true);
+        winCheckmark.localScale = Vector3.one;
+
+        winCheckmarkCoroutine = StartCoroutine(WinCheckmarkAnimationRoutine(onComplete));
+    }
+
+    private IEnumerator WinCheckmarkAnimationRoutine(Action onComplete)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            yield return ScaleWinCheckmark(Vector3.one * 1.2f, 0.2f);
+            yield return ScaleWinCheckmark(Vector3.one, 0.2f);
+        }
+
+        winCheckmark.localScale = Vector3.one;
+        winCheckmarkCoroutine = null;
+
+        onComplete?.Invoke();
+    }
+
+    private IEnumerator ScaleWinCheckmark(Vector3 targetScale, float duration)
+    {
+        Vector3 startScale = winCheckmark.localScale;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(elapsed / duration);
+
+            winCheckmark.localScale = Vector3.Lerp(startScale, targetScale, progress);
+
+            yield return null;
+        }
+
+        winCheckmark.localScale = targetScale;
     }
 }
