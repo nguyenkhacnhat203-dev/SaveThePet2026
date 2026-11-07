@@ -1,3 +1,4 @@
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,9 +12,11 @@ public class LevelManager : Singleton<LevelManager>
 
     private float checkingTimer;
     private bool wasChecking;
+    private bool isFailing;
     private int lastDisplayedTime = -1;
 
     public int CurrentLevel { get; private set; }
+    public bool IsFailing => isFailing;
 
     private void Start()
     {
@@ -25,16 +28,12 @@ public class LevelManager : Singleton<LevelManager>
         bool isChecking = GameManager.Instance.IsChecking;
 
         if (isChecking && !wasChecking)
-        {
             StartChecking();
-        }
 
         wasChecking = isChecking;
 
-        if (isChecking)
-        {
+        if (isChecking && !isFailing)
             UpdateChecking();
-        }
     }
 
     public void CreateLevel(int level)
@@ -62,23 +61,59 @@ public class LevelManager : Singleton<LevelManager>
 
     private void StartChecking()
     {
+        isFailing = false;
         checkingTimer = checkingDuration;
         lastDisplayedTime = -1;
 
-        //UiManager.Instance.ShowCheckingTime();
+        UiManager.Instance.ShowCheckingTime();
         UpdateCheckingTimeDisplay();
     }
 
     private void UpdateChecking()
     {
+        if (HasDogBeenHit())
+        {
+            StartFailSequence();
+            return;
+        }
+
         checkingTimer -= Time.deltaTime;
 
         UpdateCheckingTimeDisplay();
 
         if (checkingTimer <= 0f)
-        {
             CheckResult();
+    }
+
+    private bool HasDogBeenHit()
+    {
+        if (currentLevel == null)
+            return false;
+
+        Dog[] dogs = currentLevel.GetComponentsInChildren<Dog>(true);
+
+        foreach (Dog dog in dogs)
+        {
+            if (dog != null && dog.CurrentState == Dog.DogState.Pain)
+                return true;
         }
+
+        return false;
+    }
+
+    private void StartFailSequence()
+    {
+        if (isFailing)
+            return;
+
+        isFailing = true;
+
+        UiManager.Instance.HideCheckingTime();
+
+        UiManager.Instance.PlayLoseXAnimation(() =>
+        {
+            GameManager.Instance.ChangeState(GameManager.GameState.Lose);
+        });
     }
 
     private void UpdateCheckingTimeDisplay()
@@ -107,9 +142,14 @@ public class LevelManager : Singleton<LevelManager>
         {
             if (dog.CurrentState == Dog.DogState.Pain)
             {
-                GameManager.Instance.ChangeState(GameManager.GameState.Lose);
+                StartFailSequence();
                 return;
             }
+        }
+
+        foreach (Dog dog in dogs)
+        {
+            dog.StartSatisfied();
         }
 
         GameManager.Instance.ChangeState(GameManager.GameState.Win);

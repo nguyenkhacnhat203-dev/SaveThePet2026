@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 using System.Collections;
 
 public class UiManager : Singleton<UiManager>
@@ -8,15 +10,21 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private Image healthBar;
     [SerializeField] private GameObject[] stars;
     [SerializeField] private TMP_Text checkingTimeText;
-
-    [Header("Clock Shake Effect")]
-    [SerializeField] private RectTransform clockRectTransform; // Kéo GameObject chứa đồng hồ vào đây trên Inspector
+    [SerializeField] private RectTransform clockRectTransform;
+    [SerializeField] private RectTransform loseX;
 
     private Coroutine clockShakeCoroutine;
+    private Coroutine loseXCoroutine;
 
     private void Start()
     {
         ShowCheckingTime();
+
+        if (loseX != null)
+        {
+            loseX.gameObject.SetActive(false);
+            loseX.localScale = Vector3.one;
+        }
     }
 
     public void UpdateHealthBar(float currentLength, float maxLength)
@@ -25,8 +33,8 @@ public class UiManager : Singleton<UiManager>
             return;
 
         float progress = Mathf.Clamp01(currentLength / maxLength);
-
         float health = 1f - progress;
+
         healthBar.fillAmount = Mathf.Clamp01(health);
 
         UpdateStarsByProgress(progress);
@@ -40,17 +48,11 @@ public class UiManager : Singleton<UiManager>
         int visibleStarCount = 3;
 
         if (progress >= 1f)
-        {
             visibleStarCount = 0;
-        }
         else if (progress >= 0.67f)
-        {
             visibleStarCount = 1;
-        }
         else if (progress >= 0.33f)
-        {
             visibleStarCount = 2;
-        }
 
         UpdateStars(visibleStarCount);
     }
@@ -71,9 +73,7 @@ public class UiManager : Singleton<UiManager>
         for (int i = 0; i < stars.Length; i++)
         {
             if (stars[i] != null)
-            {
                 stars[i].SetActive(i < starCount);
-            }
         }
     }
 
@@ -93,19 +93,17 @@ public class UiManager : Singleton<UiManager>
             return;
 
         if (clockShakeCoroutine != null)
-        {
             StopCoroutine(clockShakeCoroutine);
-        }
 
         clockShakeCoroutine = StartCoroutine(ClockShakeRoutine());
     }
 
     private IEnumerator ClockShakeRoutine()
     {
-        float duration = 0.5f; 
+        float duration = 0.5f;
         float elapsed = 0f;
         Quaternion originalRotation = clockRectTransform.localRotation;
-        float shakeAngle = 15f; 
+        float shakeAngle = 15f;
 
         while (elapsed < duration)
         {
@@ -114,6 +112,7 @@ public class UiManager : Singleton<UiManager>
             float zRot = Mathf.Sin(elapsed * 25f) * shakeAngle * (1f - percent);
 
             clockRectTransform.localRotation = originalRotation * Quaternion.Euler(0f, 0f, zRot);
+
             yield return null;
         }
 
@@ -136,5 +135,56 @@ public class UiManager : Singleton<UiManager>
     {
         if (clockRectTransform != null)
             clockRectTransform.gameObject.SetActive(false);
+    }
+
+    public void PlayLoseXAnimation(Action onComplete)
+    {
+        HideCheckingTime();
+
+        if (loseXCoroutine != null)
+            StopCoroutine(loseXCoroutine);
+
+        if (loseX == null)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
+        loseX.gameObject.SetActive(true);
+        loseX.localScale = Vector3.one;
+
+        loseXCoroutine = StartCoroutine(LoseXAnimationRoutine(onComplete));
+    }
+
+    private IEnumerator LoseXAnimationRoutine(Action onComplete)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            yield return ScaleLoseX(Vector3.one * 1.2f, 0.2f);
+            yield return ScaleLoseX(Vector3.one, 0.2f);
+        }
+
+        loseX.localScale = Vector3.one;
+        loseXCoroutine = null;
+
+        onComplete?.Invoke();
+    }
+
+    private IEnumerator ScaleLoseX(Vector3 targetScale, float duration)
+    {
+        Vector3 startScale = loseX.localScale;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(elapsed / duration);
+
+            loseX.localScale = Vector3.Lerp(startScale, targetScale, progress);
+
+            yield return null;
+        }
+
+        loseX.localScale = targetScale;
     }
 }
