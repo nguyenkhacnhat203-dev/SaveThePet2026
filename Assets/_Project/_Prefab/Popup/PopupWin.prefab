@@ -180,7 +180,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 489420962407217918}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5649470450404374788}
+        m_TargetAssemblyTypeName: PopupWin, Assembly-CSharp
+        m_MethodName: ClaimDoubleReward
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &629728705879987492
 GameObject:
   m_ObjectHideFlags: 0
@@ -715,6 +727,7 @@ MonoBehaviour:
   - {fileID: 1017327465731287305}
   - {fileID: 3710435368640663374}
   - {fileID: 8147505411370003305}
+  bonusCoinText: {fileID: 2780581470060860076}
 --- !u!114 &2204531618089845317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1980,4 +1993,16 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9086227288220811689}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5649470450404374788}
+        m_TargetAssemblyTypeName: PopupWin, Assembly-CSharp
+        m_MethodName: Claim
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

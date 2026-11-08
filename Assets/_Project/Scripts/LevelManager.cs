@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using System.Collections; 
 
 public class LevelManager : Singleton<LevelManager>
 {
-    [SerializeField] private List<GameObject> levelPrefabs;
+    [SerializeField] private List<LevelSetup> levelPrefabs;
     [SerializeField] private Transform levelParent;
+
     public float checkingDuration = 5f;
 
     private GameObject currentLevel;
+    private LevelSetup currentLevelSetup;
 
     private float checkingTimer;
     private bool wasChecking;
@@ -17,6 +19,9 @@ public class LevelManager : Singleton<LevelManager>
     private int lastDisplayedTime = -1;
 
     public int CurrentLevel { get; private set; }
+    public LevelDifficulty CurrentDifficulty;
+    public int CurrentBonusCoin;
+    private bool hasRecordedWinRewards;
     public bool IsFailing => isFailing;
 
     private void Start()
@@ -45,17 +50,52 @@ public class LevelManager : Singleton<LevelManager>
             return;
         }
 
+        if (levelPrefabs[level - 1] == null)
+        {
+            Debug.LogError($"Level {level} prefab is missing!");
+            return;
+        }
+
+        ResetLevelInfo();
+
         if (currentLevel != null)
             Destroy(currentLevel);
 
-        currentLevel = Instantiate(levelPrefabs[level - 1], levelParent);
+        currentLevel = Instantiate(levelPrefabs[level - 1].gameObject, levelParent);
+
+        currentLevelSetup = currentLevel.GetComponentInChildren<LevelSetup>(true);
+
+        if (currentLevelSetup == null)
+        {
+            Debug.LogError($"Level {level} does not have LevelSetup!");
+            return;
+        }
 
         CurrentLevel = level;
 
+        CurrentDifficulty = currentLevelSetup.difficulty;
+        CurrentBonusCoin = currentLevelSetup.bonnusCoin;
+
         UiManager.Instance.ResetHealthBar();
         UiManager.Instance.Level_Text.text = "Level " + CurrentLevel.ToString();
+
         LevelData.SaveLevel(CurrentLevel);
     }
+
+    private void ResetLevelInfo()
+    {
+        CurrentDifficulty = LevelDifficulty.Easy;
+        CurrentBonusCoin = 0;
+        hasRecordedWinRewards = false;
+        currentLevelSetup = null;
+
+        checkingTimer = 0f;
+        wasChecking = false;
+        isFailing = false;
+        isCheckingFinished = false;
+        lastDisplayedTime = -1;
+    }
+
     public void NextLevel()
     {
         CreateLevel(CurrentLevel + 1);
@@ -86,7 +126,7 @@ public class LevelManager : Singleton<LevelManager>
 
         if (checkingTimer <= 0f)
         {
-            isCheckingFinished = true; 
+            isCheckingFinished = true;
 
             StartCoroutine(WaitAndCheckResult(0.5f));
         }
@@ -168,6 +208,38 @@ public class LevelManager : Singleton<LevelManager>
         StartWinSequence();
     }
 
+    private void RecordWinRewards()
+    {
+        if (hasRecordedWinRewards)
+            return;
+
+        hasRecordedWinRewards = true;
+
+        int starCount = UiManager.Instance.CurrentStarCount;
+
+        ResourceManager.Instance.AddResource(ResourceType.Star, starCount);
+
+        int difficultyMultiplier = 1;
+
+        switch (CurrentDifficulty)
+        {
+            case LevelDifficulty.Easy:
+                difficultyMultiplier = 1;
+                break;
+
+            case LevelDifficulty.Medium:
+                difficultyMultiplier = 2;
+                break;
+
+            case LevelDifficulty.Hard:
+                difficultyMultiplier = 3;
+                break;
+        }
+
+        int earnedScore = starCount * difficultyMultiplier;
+
+        ScoreManager.Instance.AddScore(earnedScore);
+    }
     private void StartWinSequence()
     {
         UiManager.Instance.HideCheckingTime();
@@ -176,9 +248,9 @@ public class LevelManager : Singleton<LevelManager>
         {
             GameManager.Instance.ChangeState(GameManager.GameState.Win);
 
-            CurrentLevel++;
+            RecordWinRewards();
 
-            LevelData.SaveLevel(CurrentLevel);
+            LevelData.SaveLevel(CurrentLevel + 1);
 
             StartCoroutine(ShowPopupWinDelay());
         });
