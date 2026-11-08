@@ -174,6 +174,14 @@ public class LevelManager : Singleton<LevelManager>
         UiManager.Instance.PlayWinCheckmarkAnimation(() =>
         {
             GameManager.Instance.ChangeState(GameManager.GameState.Win);
+            StartCoroutine(ShowPopupWinDelay());
         });
+    }
+
+    private IEnumerator ShowPopupWinDelay()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        PopupManager.Instance.ShowPopupWin();
     }
 }

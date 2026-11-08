@@ -4583,6 +4583,7 @@ GameObject:
   - component: {fileID: 1957066340}
   - component: {fileID: 1957066344}
   - component: {fileID: 1957066345}
+  - component: {fileID: 1957066346}
   m_Layer: 5
   m_Name: UiManager
   m_TagString: Untagged
@@ -4691,7 +4692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c96d41ad80f84db499455ba10c3a29fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 1
+  _dontDestroyOnLoad: 0
   healthBar: {fileID: 1287100369}
   stars:
   - {fileID: 912843398}
@@ -4716,6 +4717,21 @@ MonoBehaviour:
   smallScale: 0.8
   bigScale: 0.85
   runTime: 0
+--- !u!114 &1957066346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957066339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a374b011217db574e8f2f35f25bde6ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dontDestroyOnLoad: 0
+  popupWinPrefab: {fileID: 5649470450404374788, guid: 753ec52d39d9e364ab3cd33c53d60bf9, type: 3}
+  popupParent: {fileID: 1957066343}
 --- !u!1 &2053234164
 GameObject:
   m_ObjectHideFlags: 0
@@ -4954,7 +4970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e1296cd7dac2f44481d345d93a5b2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 1
+  _dontDestroyOnLoad: 0
   levelPrefabs:
   - {fileID: 2880641748717610992, guid: efd6fb6521d26084f80c03d2e3d5a096, type: 3}
   levelParent: {fileID: 2764844777986849380}
