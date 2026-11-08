@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ public class DrawWall : MonoBehaviour
     private List<Vector3> points = new List<Vector3>();
 
     private bool isDrawing;
+    private bool isWaitingForValidPosition;
     private float currentLength;
 
     private void Awake()
@@ -49,18 +51,28 @@ public class DrawWall : MonoBehaviour
 
     public void StartDrawing(Vector3 screenPosition)
     {
-        if (isDrawing)
+        if (isDrawing || isWaitingForValidPosition)
             return;
 
         Vector3 worldPosition = ScreenToWorld(screenPosition);
 
         if (IsBlockedByCollider(worldPosition))
+        {
+            isWaitingForValidPosition = true;
             return;
+        }
 
+        BeginDrawing(worldPosition);
+    }
+
+    private void BeginDrawing(Vector3 worldPosition)
+    {
         isDrawing = true;
+        isWaitingForValidPosition = false;
         currentLength = 0f;
 
         points.Clear();
+
         UiManager.Instance.ResetHealthBar();
 
         points.Add(worldPosition);
@@ -71,17 +83,24 @@ public class DrawWall : MonoBehaviour
 
     public void Draw(Vector3 screenPosition)
     {
+        Vector3 worldPosition = ScreenToWorld(screenPosition);
+
+        if (isWaitingForValidPosition)
+        {
+            if (IsBlockedByCollider(worldPosition))
+                return;
+
+            BeginDrawing(worldPosition);
+            return;
+        }
+
         if (!isDrawing)
             return;
 
-        Vector3 worldPosition = ScreenToWorld(screenPosition);
         Vector3 lastPoint = points[points.Count - 1];
 
-  
         if (IsPathBlocked(lastPoint, worldPosition))
-        {
-            return; 
-        }
+            return;
 
         float distance = Vector3.Distance(lastPoint, worldPosition);
 
@@ -135,13 +154,7 @@ public class DrawWall : MonoBehaviour
         Collider2D hit = Physics2D.OverlapPoint(worldPosition);
 
         if (hit != null)
-        {
-            if (hit.CompareTag("Dog") || hit.CompareTag("Bee"))
-            {
-                return true;
-            }
             return true;
-        }
 
         return false;
     }
@@ -151,18 +164,13 @@ public class DrawWall : MonoBehaviour
         if (IsBlockedByCollider(endPoint))
             return true;
 
-        RaycastHit2D[] hits = Physics2D.LinecastAll(startPoint, endPoint);
+        RaycastHit2D[] hits =
+            Physics2D.LinecastAll(startPoint, endPoint);
 
         foreach (var hit in hits)
         {
             if (hit.collider != null)
-            {
-                if (hit.collider.CompareTag("Dog") || hit.collider.CompareTag("Bee"))
-                {
-                    continue; 
-                }
-                return true; 
-            }
+                return true;
         }
 
         return false;
@@ -170,6 +178,12 @@ public class DrawWall : MonoBehaviour
 
     public void StopDrawing()
     {
+        if (isWaitingForValidPosition)
+        {
+            isWaitingForValidPosition = false;
+            return;
+        }
+
         if (!isDrawing)
             return;
 
@@ -207,7 +221,9 @@ public class DrawWall : MonoBehaviour
 
         if (rigidbody == null)
             rigidbody = wall.AddComponent<Rigidbody2D>();
-        rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+        rigidbody.collisionDetectionMode =
+            CollisionDetectionMode2D.Continuous;
 
         CreatePolygon(polygonCollider);
 
@@ -260,17 +276,12 @@ public class DrawWall : MonoBehaviour
             Vector2 localPoint =
                 wall.transform.InverseTransformPoint(current);
 
-            leftSide.Add(
-                localPoint + normal * halfWidth
-            );
+            leftSide.Add(localPoint + normal * halfWidth);
 
-            rightSide.Add(
-                localPoint - normal * halfWidth
-            );
+            rightSide.Add(localPoint - normal * halfWidth);
         }
 
-        List<Vector2> polygon =
-            new List<Vector2>();
+        List<Vector2> polygon = new List<Vector2>();
 
         polygon.AddRange(leftSide);
 
