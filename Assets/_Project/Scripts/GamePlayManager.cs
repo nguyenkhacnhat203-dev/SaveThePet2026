@@ -78,37 +78,7 @@ public class GamePlayManager : Singleton<GamePlayManager>
         }
     }
 
-    public void CheckResult(bool win)
-    {
-        if (win)
-        {
-            GameManager.Instance.ChangeState(
-                GameManager.GameState.Win
-            );
-        }
-        else
-        {
-            GameManager.Instance.ChangeState(
-                GameManager.GameState.Lose
-            );
-        }
-    }
 
-    public void PauseGame()
-    {
-        if (!GameManager.Instance.IsPlaying &&
-            !GameManager.Instance.IsChecking)
-            return;
 
-        GameManager.Instance.ChangeState(
-            GameManager.GameState.Pause
-        );
-    }
 
-    public void ResumeGame()
-    {
-        GameManager.Instance.ChangeState(
-            GameManager.GameState.Playing
-        );
-    }
 }

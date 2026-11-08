@@ -36,5 +36,11 @@ public class GameManager : Singleton<GameManager>
         currentState = newState;
 
         Time.timeScale = (currentState == GameState.Pause) ? 0f : 1f;
+
+        if (currentState == GameState.Win ||
+            currentState == GameState.Lose)
+        {
+            BeeManager.Instance.StopAllBees();
+        }
     }
 }

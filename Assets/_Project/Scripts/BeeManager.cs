@@ -436,4 +436,19 @@ public class BeeManager : Singleton<BeeManager>
 
         bee.transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
+
+    public void StopAllBees()
+    {
+        foreach (Bee bee in bees)
+        {
+            if (bee == null)
+                continue;
+
+            bee.Rb.velocity = Vector2.zero;
+            bee.Rb.angularVelocity = 0f;
+            bee.Rb.simulated = false;
+
+            bee.StartEndGameMovement();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿
 using UnityEngine;
+using System.Collections;
 
 public enum BeeState
 {
@@ -29,7 +30,10 @@ public class Bee : MonoBehaviour
     public Vector3 GapTarget { get; set; }
 
     private Vector3 spawnPosition;
+    private Coroutine endGameCoroutine;
 
+    [SerializeField] private float endGameMoveDistance = 1f;
+    [SerializeField] private float endGameCycleDuration = 0.2f;
     private void Awake()
     {
         Rb = GetComponent<Rigidbody2D>();
@@ -128,6 +132,36 @@ public class Bee : MonoBehaviour
                 Vector2 hitNormal = collision.contacts[0].normal;
                 BeeManager.Instance.BeeHitWall(this, hitNormal, 2f);
             }
+        }
+    }
+
+    public void StartEndGameMovement()
+    {
+        if (endGameCoroutine != null)
+            StopCoroutine(endGameCoroutine);
+
+        Vector3 startPosition = transform.position;
+
+        endGameCoroutine = StartCoroutine(
+            EndGameMovementRoutine(startPosition)
+        );
+    }
+
+    private IEnumerator EndGameMovementRoutine(Vector3 startPosition)
+    {
+        float elapsedTime = 0f;
+
+        while (true)
+        {
+            elapsedTime += Time.unscaledDeltaTime;
+
+            float offsetY = Mathf.Sin(
+                elapsedTime / endGameCycleDuration * Mathf.PI * 2f
+            ) * endGameMoveDistance;
+
+            transform.position = startPosition + Vector3.up * offsetY;
+
+            yield return null;
         }
     }
 }
