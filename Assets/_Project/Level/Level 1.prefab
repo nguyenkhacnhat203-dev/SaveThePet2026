@@ -2193,7 +2193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minPointDistance: 0.05
-  maxLength: 20
+  maxLength: 25
   lineWidth: 0.25
   wall: {fileID: 4785667502836072015}
 --- !u!1 &8108752144221822794

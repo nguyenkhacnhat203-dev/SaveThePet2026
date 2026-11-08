@@ -711,6 +711,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Main: {fileID: 0}
+  stars:
+  - {fileID: 1017327465731287305}
+  - {fileID: 3710435368640663374}
+  - {fileID: 8147505411370003305}
 --- !u!114 &2204531618089845317
 MonoBehaviour:
   m_ObjectHideFlags: 0

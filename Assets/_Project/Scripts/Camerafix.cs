@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class Camerafix : MonoBehaviour
 {
     private float defaultAspect = 9f / 16f;
@@ -18,9 +19,6 @@ public class Camerafix : MonoBehaviour
         }
     }
 
-
-
-
     void AdjustCamera()
     {
         float currentAspect = (float)Screen.width / Screen.height;
@@ -33,11 +31,4 @@ public class Camerafix : MonoBehaviour
 
         return Mathf.Abs(aspect - 4f / 3f) < 0.1f;
     }
-
-    //#if UNITY_EDITOR
-    //    void Update()
-    //    {
-    //        AdjustCamera();
-    //    }
-    //#endif
 }

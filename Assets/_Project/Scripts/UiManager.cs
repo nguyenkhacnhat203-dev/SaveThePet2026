@@ -12,14 +12,18 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private RectTransform clockRectTransform;
     [SerializeField] private RectTransform loseX;
     [SerializeField] private RectTransform winCheckmark;
+    public TMP_Text Level_Text;
 
     private Coroutine clockShakeCoroutine;
     private Coroutine loseXCoroutine;
     private Coroutine winCheckmarkCoroutine;
 
+    public int CurrentStarCount { get; private set; } = 3;
+
     private void Start()
     {
         ShowCheckingTime();
+        ResetHealthBar();
 
         if (loseX != null)
         {
@@ -49,14 +53,9 @@ public class UiManager : Singleton<UiManager>
 
     private void UpdateStarsByProgress(float progress)
     {
-        if (stars == null || stars.Length == 0)
-            return;
-
         int visibleStarCount = 3;
 
-        if (progress >= 1f)
-            visibleStarCount = 0;
-        else if (progress >= 0.67f)
+        if (progress >= 0.67f)
             visibleStarCount = 1;
         else if (progress >= 0.33f)
             visibleStarCount = 2;
@@ -74,13 +73,15 @@ public class UiManager : Singleton<UiManager>
 
     public void UpdateStars(int starCount)
     {
+        CurrentStarCount = Mathf.Clamp(starCount, 0, 3);
+
         if (stars == null)
             return;
 
         for (int i = 0; i < stars.Length; i++)
         {
             if (stars[i] != null)
-                stars[i].SetActive(i < starCount);
+                stars[i].SetActive(i < CurrentStarCount);
         }
     }
 
@@ -107,7 +108,7 @@ public class UiManager : Singleton<UiManager>
 
     private IEnumerator ClockShakeRoutine()
     {
-        float duration = 0.5f; 
+        float duration = 0.5f;
         float elapsed = 0f;
         Quaternion originalRotation = clockRectTransform.localRotation;
         float shakeAngle = 15f;
@@ -144,7 +145,6 @@ public class UiManager : Singleton<UiManager>
             clockRectTransform.gameObject.SetActive(false);
     }
 
-    // --- ANIMATION DẤU X KHI THUA ---
     public void PlayLoseXAnimation(Action onComplete)
     {
         HideCheckingTime();

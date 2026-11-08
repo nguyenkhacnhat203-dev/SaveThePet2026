@@ -52,9 +52,10 @@ public class LevelManager : Singleton<LevelManager>
 
         CurrentLevel = level;
 
+        UiManager.Instance.ResetHealthBar();
+        UiManager.Instance.Level_Text.text = "Level " + CurrentLevel.ToString();
         LevelData.SaveLevel(CurrentLevel);
     }
-
     public void NextLevel()
     {
         CreateLevel(CurrentLevel + 1);
@@ -174,13 +175,18 @@ public class LevelManager : Singleton<LevelManager>
         UiManager.Instance.PlayWinCheckmarkAnimation(() =>
         {
             GameManager.Instance.ChangeState(GameManager.GameState.Win);
+
+            CurrentLevel++;
+
+            LevelData.SaveLevel(CurrentLevel);
+
             StartCoroutine(ShowPopupWinDelay());
         });
     }
 
     private IEnumerator ShowPopupWinDelay()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.25f);
 
         PopupManager.Instance.ShowPopupWin();
     }
