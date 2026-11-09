@@ -1,8 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class UiManager : Singleton<UiManager>
 {
@@ -12,6 +15,7 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private RectTransform clockRectTransform;
     [SerializeField] private RectTransform loseX;
     [SerializeField] private RectTransform winCheckmark;
+
     public TMP_Text Level_Text;
 
     private Coroutine clockShakeCoroutine;
@@ -20,15 +24,108 @@ public class UiManager : Singleton<UiManager>
 
     public int CurrentStarCount { get; private set; } = 3;
 
+
+    public List<GameObject> Game;
+    public List<GameObject> Home;
     private void Start()
     {
-        ShowCheckingTime();
+        ResetLevelUI();
+        ShowHomeUi();
+    }
+
+
+
+
+    public void RePlayLevel()
+    {
+        if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)
+            return;
+
+        PopupManager.Instance.ShowPopupNextGame();
+
+
+    }
+
+
+
+    public void ShowHomeUi()
+    {
+        foreach (GameObject go in Game)
+        {
+            if (go != null)
+                go.SetActive(false);
+        }
+
+        foreach (GameObject go in Home)
+        {
+            if (go != null)
+                go.SetActive(true);
+        }
+
+
+    }
+
+    public void ShowGameUi()
+    {
+        foreach (GameObject go in Game)
+        {
+            if (go != null)
+                go.SetActive(true);
+        }
+
+        foreach (GameObject go in Home)
+        {
+            if (go != null)
+                go.SetActive(false);
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public void ResetLevelUI()
+    {
         ResetHealthBar();
+
+        StopCheckingTimeAnimation();
+
+        if (clockRectTransform != null)
+        {
+            clockRectTransform.gameObject.SetActive(true);
+        }
+
+        if (checkingTimeText != null)
+        {
+            checkingTimeText.text = Mathf.CeilToInt(
+                LevelManager.Instance.checkingDuration
+            ).ToString();
+        }
+
+        if (loseXCoroutine != null)
+        {
+            StopCoroutine(loseXCoroutine);
+            loseXCoroutine = null;
+        }
 
         if (loseX != null)
         {
             loseX.gameObject.SetActive(false);
             loseX.localScale = Vector3.one;
+        }
+
+        if (winCheckmarkCoroutine != null)
+        {
+            StopCoroutine(winCheckmarkCoroutine);
+            winCheckmarkCoroutine = null;
         }
 
         if (winCheckmark != null)
@@ -110,16 +207,19 @@ public class UiManager : Singleton<UiManager>
     {
         float duration = 0.5f;
         float elapsed = 0f;
+
         Quaternion originalRotation = clockRectTransform.localRotation;
         float shakeAngle = 15f;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
+
             float percent = elapsed / duration;
             float zRot = Mathf.Sin(elapsed * 25f) * shakeAngle * (1f - percent);
 
-            clockRectTransform.localRotation = originalRotation * Quaternion.Euler(0f, 0f, zRot);
+            clockRectTransform.localRotation =
+                originalRotation * Quaternion.Euler(0f, 0f, zRot);
 
             yield return null;
         }
@@ -136,7 +236,9 @@ public class UiManager : Singleton<UiManager>
         if (checkingTimeText == null)
             return;
 
-        checkingTimeText.text = LevelManager.Instance.checkingDuration.ToString();
+        checkingTimeText.text = Mathf.CeilToInt(
+            LevelManager.Instance.checkingDuration
+        ).ToString();
     }
 
     public void HideCheckingTime()
@@ -161,7 +263,9 @@ public class UiManager : Singleton<UiManager>
         loseX.gameObject.SetActive(true);
         loseX.localScale = Vector3.one;
 
-        loseXCoroutine = StartCoroutine(LoseXAnimationRoutine(onComplete));
+        loseXCoroutine = StartCoroutine(
+            LoseXAnimationRoutine(onComplete)
+        );
     }
 
     private IEnumerator LoseXAnimationRoutine(Action onComplete)
@@ -186,9 +290,14 @@ public class UiManager : Singleton<UiManager>
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
+
             float progress = Mathf.Clamp01(elapsed / duration);
 
-            loseX.localScale = Vector3.Lerp(startScale, targetScale, progress);
+            loseX.localScale = Vector3.Lerp(
+                startScale,
+                targetScale,
+                progress
+            );
 
             yield return null;
         }
@@ -212,7 +321,9 @@ public class UiManager : Singleton<UiManager>
         winCheckmark.gameObject.SetActive(true);
         winCheckmark.localScale = Vector3.one;
 
-        winCheckmarkCoroutine = StartCoroutine(WinCheckmarkAnimationRoutine(onComplete));
+        winCheckmarkCoroutine = StartCoroutine(
+            WinCheckmarkAnimationRoutine(onComplete)
+        );
     }
 
     private IEnumerator WinCheckmarkAnimationRoutine(Action onComplete)
@@ -237,13 +348,32 @@ public class UiManager : Singleton<UiManager>
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
+
             float progress = Mathf.Clamp01(elapsed / duration);
 
-            winCheckmark.localScale = Vector3.Lerp(startScale, targetScale, progress);
+            winCheckmark.localScale = Vector3.Lerp(
+                startScale,
+                targetScale,
+                progress
+            );
 
             yield return null;
         }
 
         winCheckmark.localScale = targetScale;
+    }
+
+    public void StopCheckingTimeAnimation()
+    {
+        if (clockShakeCoroutine != null)
+        {
+            StopCoroutine(clockShakeCoroutine);
+            clockShakeCoroutine = null;
+        }
+
+        if (clockRectTransform != null)
+        {
+            clockRectTransform.localRotation = Quaternion.identity;
+        }
     }
 }

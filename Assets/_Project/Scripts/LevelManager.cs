@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,8 +11,7 @@ public class LevelManager : Singleton<LevelManager>
 
     public float checkingDuration = 5f;
 
-    private GameObject currentLevel;
-    private LevelSetup currentLevelSetup;
+    public LevelSetup currentLevelSetup;
 
     private float checkingTimer;
     private bool wasChecking;
@@ -18,16 +19,16 @@ public class LevelManager : Singleton<LevelManager>
     private bool isCheckingFinished;
     private int lastDisplayedTime = -1;
 
+    private Coroutine checkingResultCoroutine;
+
     public int CurrentLevel { get; private set; }
     public LevelDifficulty CurrentDifficulty;
     public int CurrentBonusCoin;
-    private bool hasRecordedWinRewards;
+
+
     public bool IsFailing => isFailing;
 
-    private void Start()
-    {
-        CreateLevel(LevelData.LoadLevel());
-    }
+  
 
     private void Update()
     {
@@ -42,51 +43,94 @@ public class LevelManager : Singleton<LevelManager>
             UpdateChecking();
     }
 
-    public void CreateLevel(int level)
+    public void CreateLevel()
     {
+        StartCoroutine(CreateLevelCoroutine());
+    }
+
+    private IEnumerator CreateLevelCoroutine()
+    {
+        int level = LevelData.LoadLevel();
+
         if (level <= 0 || level > levelPrefabs.Count)
         {
-            Debug.LogError($"Level {level} does not exist!");
-            return;
+            yield break;
         }
 
         if (levelPrefabs[level - 1] == null)
         {
-            Debug.LogError($"Level {level} prefab is missing!");
-            return;
+            yield break;
         }
+
+        StopChecking();
 
         ResetLevelInfo();
 
-        if (currentLevel != null)
-            Destroy(currentLevel);
+        if (currentLevelSetup != null)
+        {
+            Destroy(currentLevelSetup.transform.root.gameObject);
+            currentLevelSetup = null;
+        }
 
-        currentLevel = Instantiate(levelPrefabs[level - 1].gameObject, levelParent);
+        for (int i = levelParent.childCount - 1; i >= 0; i--)
+        {
+            Destroy(levelParent.GetChild(i).gameObject);
+        }
 
-        currentLevelSetup = currentLevel.GetComponentInChildren<LevelSetup>(true);
+        yield return null;
+
+        GameObject newLevel = Instantiate(
+            levelPrefabs[level - 1].gameObject,
+            levelParent
+        );
+
+        currentLevelSetup = newLevel.GetComponentInChildren<LevelSetup>(true);
 
         if (currentLevelSetup == null)
         {
             Debug.LogError($"Level {level} does not have LevelSetup!");
-            return;
+            Destroy(newLevel);
+            yield break;
         }
 
         CurrentLevel = level;
-
         CurrentDifficulty = currentLevelSetup.difficulty;
         CurrentBonusCoin = currentLevelSetup.bonnusCoin;
 
-        UiManager.Instance.ResetHealthBar();
-        UiManager.Instance.Level_Text.text = "Level " + CurrentLevel.ToString();
+        UiManager.Instance.ResetLevelUI();
+        UiManager.Instance.Level_Text.text = "Level " + CurrentLevel;
 
         LevelData.SaveLevel(CurrentLevel);
+    }
+
+    private void StopChecking()
+    {
+        if (checkingResultCoroutine != null)
+        {
+            StopCoroutine(checkingResultCoroutine);
+            checkingResultCoroutine = null;
+        }
+
+        checkingTimer = 0f;
+        wasChecking = false;
+        isFailing = false;
+        isCheckingFinished = false;
+        lastDisplayedTime = -1;
+
+        UiManager.Instance.StopCheckingTimeAnimation();
+        UiManager.Instance.HideCheckingTime();
+
+        GameManager.Instance.ChangeState(GameManager.GameState.Playing);
+    }
+    public void ResetLevel()
+    {
+        Destroy(currentLevelSetup.gameObject); 
     }
 
     private void ResetLevelInfo()
     {
         CurrentDifficulty = LevelDifficulty.Easy;
         CurrentBonusCoin = 0;
-        hasRecordedWinRewards = false;
         currentLevelSetup = null;
 
         checkingTimer = 0f;
@@ -94,11 +138,6 @@ public class LevelManager : Singleton<LevelManager>
         isFailing = false;
         isCheckingFinished = false;
         lastDisplayedTime = -1;
-    }
-
-    public void NextLevel()
-    {
-        CreateLevel(CurrentLevel + 1);
     }
 
     private void StartChecking()
@@ -126,24 +165,30 @@ public class LevelManager : Singleton<LevelManager>
 
         if (checkingTimer <= 0f)
         {
+            checkingTimer = 0f;
             isCheckingFinished = true;
 
-            StartCoroutine(WaitAndCheckResult(0.5f));
+            checkingResultCoroutine = StartCoroutine(
+                WaitAndCheckResult(0.5f)
+            );
         }
     }
 
     private IEnumerator WaitAndCheckResult(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
+
+        checkingResultCoroutine = null;
+
         CheckResult();
     }
 
     private bool HasDogBeenHit()
     {
-        if (currentLevel == null)
+        if (currentLevelSetup == null)
             return false;
 
-        Dog[] dogs = currentLevel.GetComponentsInChildren<Dog>(true);
+        Dog[] dogs = currentLevelSetup.GetComponentsInChildren<Dog>(true);
 
         foreach (Dog dog in dogs)
         {
@@ -166,12 +211,17 @@ public class LevelManager : Singleton<LevelManager>
         UiManager.Instance.PlayLoseXAnimation(() =>
         {
             GameManager.Instance.ChangeState(GameManager.GameState.Lose);
+            StartCoroutine(ShowPopupFailDelay());
+
         });
     }
 
     private void UpdateCheckingTimeDisplay()
     {
-        int displayedTime = Mathf.Max(0, Mathf.CeilToInt(checkingTimer));
+        int displayedTime = Mathf.Max(
+            0,
+            Mathf.CeilToInt(checkingTimer)
+        );
 
         if (displayedTime == lastDisplayedTime)
             return;
@@ -183,7 +233,10 @@ public class LevelManager : Singleton<LevelManager>
 
     private void CheckResult()
     {
-        Dog[] dogs = currentLevel.GetComponentsInChildren<Dog>(true);
+        if (currentLevelSetup == null)
+            return;
+
+        Dog[] dogs = currentLevelSetup.GetComponentsInChildren<Dog>(true);
 
         if (dogs.Length == 0)
         {
@@ -208,47 +261,15 @@ public class LevelManager : Singleton<LevelManager>
         StartWinSequence();
     }
 
-    private void RecordWinRewards()
-    {
-        if (hasRecordedWinRewards)
-            return;
 
-        hasRecordedWinRewards = true;
-
-        int starCount = UiManager.Instance.CurrentStarCount;
-
-        ResourceManager.Instance.AddResource(ResourceType.Star, starCount);
-
-        int difficultyMultiplier = 1;
-
-        switch (CurrentDifficulty)
-        {
-            case LevelDifficulty.Easy:
-                difficultyMultiplier = 1;
-                break;
-
-            case LevelDifficulty.Medium:
-                difficultyMultiplier = 2;
-                break;
-
-            case LevelDifficulty.Hard:
-                difficultyMultiplier = 3;
-                break;
-        }
-
-        int earnedScore = starCount * difficultyMultiplier;
-
-        ScoreManager.Instance.AddScore(earnedScore);
-    }
     private void StartWinSequence()
     {
         UiManager.Instance.HideCheckingTime();
+        GameManager.Instance.ChangeState(GameManager.GameState.Win);
 
         UiManager.Instance.PlayWinCheckmarkAnimation(() =>
         {
-            GameManager.Instance.ChangeState(GameManager.GameState.Win);
 
-            RecordWinRewards();
 
             LevelData.SaveLevel(CurrentLevel + 1);
 
@@ -258,8 +279,14 @@ public class LevelManager : Singleton<LevelManager>
 
     private IEnumerator ShowPopupWinDelay()
     {
-        yield return new WaitForSeconds(1.25f);
+        yield return new WaitForSeconds(1f);
 
         PopupManager.Instance.ShowPopupWin();
+    }
+    private IEnumerator ShowPopupFailDelay()
+    {
+        yield return new WaitForSeconds(1f);
+
+        PopupManager.Instance.ShowPopupFail();
     }
 }

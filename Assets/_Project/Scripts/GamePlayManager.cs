@@ -7,9 +7,9 @@ public class GamePlayManager : Singleton<GamePlayManager>
 
     private void Start()
     {
-        GameManager.Instance.ChangeState(
-            GameManager.GameState.Playing
-        );
+        //GameManager.Instance.ChangeState(
+        //    GameManager.GameState.Playing
+        //);
 
         if (beeSpawners == null || beeSpawners.Length == 0)
         {

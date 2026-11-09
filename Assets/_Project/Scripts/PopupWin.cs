@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using TMPro;
 
@@ -16,7 +17,7 @@ public class PopupWin : PopupBase
         bonusCoin = LevelManager.Instance.CurrentBonusCoin;
 
         if (bonusCoinText != null)
-            bonusCoinText.text = "+"+bonusCoin.ToString();
+            bonusCoinText.text = "+" + bonusCoin.ToString();
     }
 
     private void UpdateStars(int starCount)
@@ -38,7 +39,16 @@ public class PopupWin : PopupBase
 
         hasClaimedReward = true;
 
+        ScoreManager.Instance.CalculateWinScore(
+            UiManager.Instance.CurrentStarCount,
+            LevelManager.Instance.CurrentDifficulty
+        );
+
         ResourceManager.Instance.AddResource(ResourceType.Coin, bonusCoin);
+
+        PopupManager.Instance.ShowPopupNextGame();
+
+        Destroy(gameObject);
     }
 
     public void ClaimDoubleReward()
@@ -47,6 +57,11 @@ public class PopupWin : PopupBase
             return;
 
         hasClaimedReward = true;
+
+        ScoreManager.Instance.CalculateWinScore(
+            UiManager.Instance.CurrentStarCount,
+            LevelManager.Instance.CurrentDifficulty
+        );
 
         int reward = bonusCoin * 2;
 

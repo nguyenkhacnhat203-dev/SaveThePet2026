@@ -19,7 +19,7 @@ public class DrawWall : MonoBehaviour
     private bool isDrawing;
     private bool isWaitingForValidPosition;
     private float currentLength;
-
+    private bool hasDrawn;
     private void Awake()
     {
         mainCamera = Camera.main;
@@ -51,7 +51,7 @@ public class DrawWall : MonoBehaviour
 
     public void StartDrawing(Vector3 screenPosition)
     {
-        if (isDrawing || isWaitingForValidPosition)
+        if (hasDrawn || isDrawing || isWaitingForValidPosition)
             return;
 
         Vector3 worldPosition = ScreenToWorld(screenPosition);
@@ -83,6 +83,9 @@ public class DrawWall : MonoBehaviour
 
     public void Draw(Vector3 screenPosition)
     {
+        if (hasDrawn)
+            return;
+
         Vector3 worldPosition = ScreenToWorld(screenPosition);
 
         if (isWaitingForValidPosition)
@@ -113,18 +116,13 @@ public class DrawWall : MonoBehaviour
 
             if (remaining > 0f)
             {
-                Vector3 direction =
-                    (worldPosition - lastPoint).normalized;
-
-                worldPosition =
-                    lastPoint + direction * remaining;
+                Vector3 direction = (worldPosition - lastPoint).normalized;
+                worldPosition = lastPoint + direction * remaining;
 
                 if (!IsPathBlocked(lastPoint, worldPosition))
                 {
                     points.Add(worldPosition);
-
                     currentLength = maxLength;
-
                     UpdateLine();
 
                     UiManager.Instance.UpdateHealthBar(
@@ -138,9 +136,7 @@ public class DrawWall : MonoBehaviour
         }
 
         points.Add(worldPosition);
-
         currentLength += distance;
-
         UpdateLine();
 
         UiManager.Instance.UpdateHealthBar(
@@ -148,7 +144,6 @@ public class DrawWall : MonoBehaviour
             maxLength
         );
     }
-
     private bool IsBlockedByCollider(Vector2 worldPosition)
     {
         Collider2D hit = Physics2D.OverlapPoint(worldPosition);
@@ -191,10 +186,10 @@ public class DrawWall : MonoBehaviour
 
         if (points.Count >= 2)
         {
+            hasDrawn = true;
             SetupWallPhysics();
         }
     }
-
     private void UpdateLine()
     {
         lineRenderer.positionCount = points.Count;
