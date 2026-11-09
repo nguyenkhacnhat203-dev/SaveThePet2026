@@ -47,14 +47,6 @@ public class BeeManager : Singleton<BeeManager>
 
     public void Tick(float deltaTime)
     {
-        gapScanTimer -= deltaTime;
-
-        if (gapScanTimer <= 0)
-        {
-            ScanForGaps();
-            gapScanTimer = 0.2f;
-        }
-
         for (int i = bees.Count - 1; i >= 0; i--)
         {
             Bee bee = bees[i];
@@ -65,10 +57,15 @@ public class BeeManager : Singleton<BeeManager>
                 continue;
             }
 
+            if (bee.IsEndGameMoving)
+            {
+                UpdateEndGameMovement(bee, deltaTime);
+                continue;
+            }
+
             UpdateBee(bee, deltaTime);
         }
     }
-
     private void ScanForGaps()
     {
         gapsByDog.Clear();
@@ -444,11 +441,24 @@ public class BeeManager : Singleton<BeeManager>
             if (bee == null)
                 continue;
 
-            bee.Rb.velocity = Vector2.zero;
-            bee.Rb.angularVelocity = 0f;
-            bee.Rb.simulated = false;
-
             bee.StartEndGameMovement();
         }
+    }
+    private void UpdateEndGameMovement(Bee bee, float deltaTime)
+    {
+        if (!bee.IsEndGameMoving)
+            return;
+
+        bee.EndGameElapsedTime += deltaTime;
+
+        float offsetY = Mathf.Sin(
+            bee.EndGameElapsedTime /
+            bee.EndGameCycleDuration * Mathf.PI * 2f
+        ) * bee.EndGameMoveDistance;
+
+        Vector2 targetPosition = bee.EndGameStartPosition +
+            Vector2.up * offsetY;
+
+        bee.Rb.MovePosition(targetPosition);
     }
 }

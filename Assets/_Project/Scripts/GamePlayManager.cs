@@ -30,7 +30,14 @@ public class GamePlayManager : Singleton<GamePlayManager>
 
     private void FixedUpdate()
     {
-        if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)
+        if (GameManager.Instance.IsWin || GameManager.Instance.IsLose)
+        {
+            BeeManager.Instance.Tick(Time.fixedUnscaledDeltaTime);
+            Physics2D.Simulate(Time.fixedUnscaledDeltaTime);
+            return;
+        }
+
+        if (GameManager.Instance.IsPause)
             return;
 
         if (GameManager.Instance.IsPlaying || GameManager.Instance.IsChecking)

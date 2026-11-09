@@ -31,9 +31,15 @@ public class Bee : MonoBehaviour
 
     private Vector3 spawnPosition;
     private Coroutine endGameCoroutine;
+    public Vector2 EndGameStartPosition { get; set; }
+    public float EndGameElapsedTime { get; set; }
+    public bool IsEndGameMoving { get; set; }
 
     [SerializeField] private float endGameMoveDistance = 1f;
     [SerializeField] private float endGameCycleDuration = 0.2f;
+
+    public float EndGameMoveDistance => endGameMoveDistance;
+    public float EndGameCycleDuration => endGameCycleDuration;
     private void Awake()
     {
         Rb = GetComponent<Rigidbody2D>();
@@ -137,31 +143,14 @@ public class Bee : MonoBehaviour
 
     public void StartEndGameMovement()
     {
-        if (endGameCoroutine != null)
-            StopCoroutine(endGameCoroutine);
+        IsEndGameMoving = true;
+        EndGameStartPosition = Rb.position;
+        EndGameElapsedTime = 0f;
 
-        Vector3 startPosition = transform.position;
-
-        endGameCoroutine = StartCoroutine(
-            EndGameMovementRoutine(startPosition)
-        );
+        Rb.velocity = Vector2.zero;
+        Rb.angularVelocity = 0f;
+        Rb.simulated = true;
     }
-
-    private IEnumerator EndGameMovementRoutine(Vector3 startPosition)
-    {
-        float elapsedTime = 0f;
-
-        while (true)
-        {
-            elapsedTime += Time.unscaledDeltaTime;
-
-            float offsetY = Mathf.Sin(
-                elapsedTime / endGameCycleDuration * Mathf.PI * 2f
-            ) * endGameMoveDistance;
-
-            transform.position = startPosition + Vector3.up * offsetY;
-
-            yield return null;
-        }
-    }
+    
+    
 }
