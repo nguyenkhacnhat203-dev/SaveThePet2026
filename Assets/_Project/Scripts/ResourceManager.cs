@@ -12,12 +12,15 @@ public class ResourceManager : Singleton<ResourceManager>
     public int Star;
     public int Gem;
     public int Coin;
+
     public DataResource Data { get; private set; }
 
     private void Start()
     {
         Data = new DataResource();
         Data.LoadData(this);
+
+        NotifyResourceChanged();
     }
 
     public void AddResource(ResourceType type, int amount)
@@ -38,9 +41,13 @@ public class ResourceManager : Singleton<ResourceManager>
             case ResourceType.Coin:
                 Coin += amount;
                 break;
+
+            default:
+                return;
         }
 
         Data.SaveData(this);
+        NotifyResourceChanged();
     }
 
     public bool SpendResource(ResourceType type, int amount)
@@ -67,6 +74,8 @@ public class ResourceManager : Singleton<ResourceManager>
         }
 
         Data.SaveData(this);
+        NotifyResourceChanged();
+
         return true;
     }
 
@@ -87,4 +96,12 @@ public class ResourceManager : Singleton<ResourceManager>
                 return 0;
         }
     }
+
+    private void NotifyResourceChanged()
+    {
+        GameAction.NotifyResourceChanged(Coin, Gem);
+    }
+
+ 
+
 }

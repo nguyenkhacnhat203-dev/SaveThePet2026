@@ -27,14 +27,39 @@ public class UiManager : Singleton<UiManager>
 
     public List<GameObject> Game;
     public List<GameObject> Home;
+
+
+    [SerializeField] private TMP_Text Coin;
+    [SerializeField] private TMP_Text Gem;
+
     private void Start()
     {
         ResetLevelUI();
         ShowHomeUi();
+
+        UpdateResourceUI(
+            ResourceManager.Instance.Coin,
+            ResourceManager.Instance.Gem
+        );
+    }
+    private void OnEnable()
+    {
+        GameAction.OnResourceChanged += UpdateResourceUI;
     }
 
+    private void OnDisable()
+    {
+        GameAction.OnResourceChanged -= UpdateResourceUI;
+    }
 
+    private void UpdateResourceUI(int coin, int gem)
+    {
+        if (Coin != null)
+            Coin.text = coin.ToString();
 
+        if (Gem != null)
+            Gem.text = gem.ToString();
+    }
 
     public void RePlayLevel()
     {

@@ -1,18 +1,15 @@
-using System.Collections;
+
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class ThemeData : MonoBehaviour
+[Serializable]
+public class ThemeData
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public List<bool> DogThemes = new List<bool>();
+    public List<bool> BeeThemes = new List<bool>();
+    public List<bool> BeehiveThemes = new List<bool>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public int SelectedDogTheme;
+    public int SelectedBeeTheme;
+    public int SelectedBeehiveTheme;
 }

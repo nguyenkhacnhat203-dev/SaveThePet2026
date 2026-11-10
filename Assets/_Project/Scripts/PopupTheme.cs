@@ -1,7 +1,9 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class ThemeItem
@@ -20,6 +22,16 @@ public class ThemeGroup
     public List<ThemeItem> Themes = new List<ThemeItem>();
 }
 
+[System.Serializable]
+public class ThemeTab
+{
+    public Button Button;
+    public Image Image;
+    public Sprite On;
+    public Sprite Off;
+    public GameObject ScrollView;
+}
+
 public class PopupTheme : PopupBase
 {
     [SerializeField] private BaseTheme prefab;
@@ -28,6 +40,11 @@ public class PopupTheme : PopupBase
     [SerializeField] private ThemeGroup dogTheme;
     [SerializeField] private ThemeGroup beeTheme;
     [SerializeField] private ThemeGroup beehiveTheme;
+
+    [Header("Theme Tabs")]
+    [SerializeField] private ThemeTab dogTab;
+    [SerializeField] private ThemeTab beeTab;
+    [SerializeField] private ThemeTab beehiveTab;
 
     private BaseTheme currentThemeDog;
     private BaseTheme currentThemeBee;
@@ -39,25 +56,111 @@ public class PopupTheme : PopupBase
 
     private bool isSpawned;
 
+    [SerializeField] private TMP_Text Coin;
+    [SerializeField] private TMP_Text Gem;
+
     protected override void Start()
     {
         base.Start();
+
         Spawn();
+        SetupTabs();
+        SelectTab(0);
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+
+        GameAction.OnResourceChanged += UpdateResourceUI;
+
+        if (ResourceManager.Instance != null)
+        {
+            UpdateResourceUI(
+                ResourceManager.Instance.Coin,
+                ResourceManager.Instance.Gem
+            );
+        }
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+
+        GameAction.OnResourceChanged -= UpdateResourceUI;
+    }
+
+    private void UpdateResourceUI(int coin, int gem)
+    {
+        if (Coin != null)
+            Coin.text = coin.ToString();
+
+        if (Gem != null)
+            Gem.text = gem.ToString();
+    }
+
+    public override void DestroyPopup()
+    {
+        Destroy(gameObject);
     }
 
     public void Spawn()
     {
-        if (isSpawned)
+        if (isSpawned || prefab == null)
             return;
 
-        if (prefab == null)
+        ThemeManager manager = ThemeManager.Instance;
+
+        if (manager == null)
         {
+            Debug.LogError("ThemeManager chưa được khởi tạo!");
             return;
         }
 
-        SpawnThemes(dogTheme, spawnedThemesDog, SelectThemeDog, "Dog");
-        SpawnThemes(beeTheme, spawnedThemesBee, SelectThemeBee, "Bee");
-        SpawnThemes(beehiveTheme, spawnedThemesBeehive, SelectThemeBeehive, "Beehive");
+        manager.Initialize(
+            dogTheme.Themes,
+            beeTheme.Themes,
+            beehiveTheme.Themes
+        );
+
+        SpawnThemes(
+            dogTheme,
+            spawnedThemesDog,
+            ThemeCategory.Dog,
+            SelectThemeDog
+        );
+
+        SpawnThemes(
+            beeTheme,
+            spawnedThemesBee,
+            ThemeCategory.Bee,
+            SelectThemeBee
+        );
+
+        SpawnThemes(
+            beehiveTheme,
+            spawnedThemesBeehive,
+            ThemeCategory.Beehive,
+            SelectThemeBeehive
+        );
+
+        RestoreSelectedTheme(
+            spawnedThemesDog,
+            ThemeCategory.Dog,
+            SelectThemeDog
+        );
+
+        RestoreSelectedTheme(
+            spawnedThemesBee,
+            ThemeCategory.Bee,
+            SelectThemeBee
+        );
+
+        RestoreSelectedTheme(
+            spawnedThemesBeehive,
+            ThemeCategory.Beehive,
+            SelectThemeBeehive
+        );
 
         isSpawned = true;
     }
@@ -65,65 +168,132 @@ public class PopupTheme : PopupBase
     private void SpawnThemes(
         ThemeGroup group,
         List<BaseTheme> list,
-        Action<BaseTheme> callback,
-        string groupName)
+        ThemeCategory category,
+        Action<BaseTheme> callback)
     {
-        if (group == null)
-        {
+        if (group == null || group.Parent == null ||
+            group.Themes == null || group.Themes.Count == 0)
             return;
-        }
 
-        if (group.Parent == null)
-        {
-            return;
-        }
-
-        if (group.Themes == null || group.Themes.Count == 0)
-        {
-            return;
-        }
+        ThemeManager manager = ThemeManager.Instance;
 
         for (int i = group.Themes.Count - 1; i >= 0; i--)
         {
             ThemeItem item = group.Themes[i];
 
             if (item == null)
-            {
                 continue;
-            }
+
+            int themeIndex = i;
+
+            bool unlocked = manager.IsUnlocked(category, themeIndex);
 
             BaseTheme baseTheme = Instantiate(prefab, group.Parent);
 
             baseTheme.transform.SetAsFirstSibling();
 
-            baseTheme.Setup(item, callback);
+            baseTheme.Setup(
+                item,
+                unlocked,
+                callback,
+                () => manager.UnlockTheme(category, themeIndex)
+            );
 
-            list.Add(baseTheme);
+            list.Insert(0, baseTheme);
         }
+    }
 
+    private void RestoreSelectedTheme(
+        List<BaseTheme> list,
+        ThemeCategory category,
+        Action<BaseTheme> callback)
+    {
+        if (list == null || list.Count == 0)
+            return;
+
+        int selectedIndex = ThemeManager.Instance.GetSelectedTheme(category);
+
+        if (selectedIndex < 0 || selectedIndex >= list.Count)
+            return;
+
+        BaseTheme selected = list[selectedIndex];
+
+        if (selected != null)
+            callback?.Invoke(selected);
+    }
+
+    private void SetupTabs()
+    {
+        dogTab.Button.onClick.RemoveAllListeners();
+        beeTab.Button.onClick.RemoveAllListeners();
+        beehiveTab.Button.onClick.RemoveAllListeners();
+
+        dogTab.Button.onClick.AddListener(() => SelectTab(0));
+        beeTab.Button.onClick.AddListener(() => SelectTab(1));
+        beehiveTab.Button.onClick.AddListener(() => SelectTab(2));
+    }
+
+    private void SelectTab(int index)
+    {
+        UpdateTab(dogTab, index == 0);
+        UpdateTab(beeTab, index == 1);
+        UpdateTab(beehiveTab, index == 2);
+    }
+
+    private void UpdateTab(ThemeTab tab, bool active)
+    {
+        if (tab == null)
+            return;
+
+        if (tab.ScrollView != null)
+            tab.ScrollView.SetActive(active);
+
+        if (tab.Image != null)
+            tab.Image.sprite = active ? tab.On : tab.Off;
     }
 
     private void SelectThemeDog(BaseTheme selectedTheme)
     {
-        SelectTheme(selectedTheme, spawnedThemesDog, ref currentThemeDog);
+        SelectTheme(
+            selectedTheme,
+            spawnedThemesDog,
+            ref currentThemeDog,
+            ThemeCategory.Dog
+        );
     }
 
     private void SelectThemeBee(BaseTheme selectedTheme)
     {
-        SelectTheme(selectedTheme, spawnedThemesBee, ref currentThemeBee);
+        SelectTheme(
+            selectedTheme,
+            spawnedThemesBee,
+            ref currentThemeBee,
+            ThemeCategory.Bee
+        );
     }
 
     private void SelectThemeBeehive(BaseTheme selectedTheme)
     {
-        SelectTheme(selectedTheme, spawnedThemesBeehive, ref currentThemeBeehive);
+        SelectTheme(
+            selectedTheme,
+            spawnedThemesBeehive,
+            ref currentThemeBeehive,
+            ThemeCategory.Beehive
+        );
     }
 
     private void SelectTheme(
         BaseTheme selectedTheme,
         List<BaseTheme> list,
-        ref BaseTheme currentTheme)
+        ref BaseTheme currentTheme,
+        ThemeCategory category)
     {
-        if (currentTheme == selectedTheme)
+        if (selectedTheme == null || currentTheme == selectedTheme)
+            return;
+
+        int index = list.IndexOf(selectedTheme);
+
+        if (index < 0)
             return;
 
         foreach (BaseTheme theme in list)
@@ -134,5 +304,7 @@ public class PopupTheme : PopupBase
 
         currentTheme = selectedTheme;
         currentTheme.SetTick(true);
+
+        ThemeManager.Instance.SetSelectedTheme(category, index);
     }
 }

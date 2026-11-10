@@ -1098,7 +1098,7 @@ MonoBehaviour:
   beePrefab: {fileID: 1512995199667820362, guid: 3b3537a723f37bb4c9adb5e87e230ca5, type: 3}
   beeSpawnPoints:
   - {fileID: 1147148314}
-  beeSpeed: 7
+  beeSpeed: 8
   duration: 0.6
   height: 2
   returnSpeed: 4
@@ -2058,51 +2058,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AspectMode: 3
   m_AspectRatio: 0.5625
---- !u!1 &1022987558
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1022987560}
-  - component: {fileID: 1022987559}
-  m_Layer: 0
-  m_Name: ThemeManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1022987559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1022987558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 396d891e1fac5d142b499017f37df940, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 1
---- !u!4 &1022987560
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1022987558}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1050569309
 GameObject:
   m_ObjectHideFlags: 0
@@ -2247,7 +2202,7 @@ GameObject:
   - component: {fileID: 1093701007}
   - component: {fileID: 1093701006}
   m_Layer: 5
-  m_Name: Settings (3)
+  m_Name: Gembar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2672,7 +2627,7 @@ GameObject:
   - component: {fileID: 1290596437}
   - component: {fileID: 1290596436}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text_Gem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3144,7 +3099,7 @@ GameObject:
   - component: {fileID: 1440898872}
   - component: {fileID: 1440898871}
   m_Layer: 5
-  m_Name: Settings (4)
+  m_Name: Coinbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3334,7 +3289,7 @@ GameObject:
   - component: {fileID: 1501608856}
   - component: {fileID: 1501608855}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text_Coin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4083,6 +4038,8 @@ MonoBehaviour:
   - {fileID: 989847733}
   - {fileID: 462704156}
   - {fileID: 637774229}
+  Coin: {fileID: 1501608855}
+  Gem: {fileID: 1290596436}
 --- !u!114 &1957066345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4391,6 +4348,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &147166881309907652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7639637139403984010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 396d891e1fac5d142b499017f37df940, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dontDestroyOnLoad: 1
 --- !u!1 &422290282687933500
 GameObject:
   m_ObjectHideFlags: 0
@@ -5483,6 +5453,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!4 &5572922806147648773
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7639637139403984010}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5637322603727638596
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6129,6 +6114,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &7639637139403984010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5572922806147648773}
+  - component: {fileID: 147166881309907652}
+  m_Layer: 0
+  m_Name: ThemeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &7839533420747173718
 Transform:
   m_ObjectHideFlags: 0
@@ -6503,4 +6505,4 @@ SceneRoots:
   - {fileID: 457216880}
   - {fileID: 393012469}
   - {fileID: 1461974236}
-  - {fileID: 1022987560}
+  - {fileID: 5572922806147648773}
