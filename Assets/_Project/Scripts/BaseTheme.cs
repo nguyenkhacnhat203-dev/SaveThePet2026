@@ -29,6 +29,7 @@ public class BaseTheme : MonoBehaviour
     private ThemePriceType priceType;
     private Action<BaseTheme> onSelect;
     private Action unlockCallback;
+    private Action<string, Action> showQuestion;
 
     private Button themeButton;
 
@@ -37,11 +38,14 @@ public class BaseTheme : MonoBehaviour
     private int buyCoin;
     private int buyGem;
 
+    private string themeName;
+
     public void Setup(
         ThemeItem data,
         bool unlocked,
         Action<BaseTheme> callback,
-        Action onUnlock)
+        Action onUnlock,
+        Action<string, Action> questionCallback)
     {
         if (data == null)
             return;
@@ -54,21 +58,20 @@ public class BaseTheme : MonoBehaviour
 
         Theme.sprite = data.Theme;
         Name_Theme.text = data.Name_Theme;
+        themeName = data.Name_Theme;
 
         priceType = data.PriceType;
         onSelect = callback;
         unlockCallback = onUnlock;
+        showQuestion = questionCallback;
 
         buyCoin = data.BuyCoin;
         buyGem = data.BuyGem;
 
         isUnlocked = unlocked || priceType == ThemePriceType.Free;
 
-        if (priceType == ThemePriceType.BuyCoin)
-            Cost_BuyCoin.text = buyCoin.ToString();
-
-        if (priceType == ThemePriceType.BuyGem)
-            Cost_BuyGem.text = buyGem.ToString();
+        Cost_BuyCoin.text = buyCoin.ToString();
+        Cost_BuyGem.text = buyGem.ToString();
 
         Btn_BuyCoin.onClick.RemoveAllListeners();
         Btn_BuyGem.onClick.RemoveAllListeners();
@@ -114,13 +117,10 @@ public class BaseTheme : MonoBehaviour
 
         ResourceManager resource = ResourceManager.Instance;
 
-        if (resource == null)
+        if (resource == null || resource.Coin < buyCoin)
             return;
 
-        if (!resource.SpendResource(ResourceType.Coin, buyCoin))
-            return;
-
-        UnlockTheme();
+        showQuestion?.Invoke(themeName, BuyCoinConfirmed);
     }
 
     private void BuyWithGem()
@@ -130,10 +130,29 @@ public class BaseTheme : MonoBehaviour
 
         ResourceManager resource = ResourceManager.Instance;
 
-        if (resource == null)
+        if (resource == null || resource.Gem < buyGem)
             return;
 
-        if (!resource.SpendResource(ResourceType.Gem, buyGem))
+        showQuestion?.Invoke(themeName, BuyGemConfirmed);
+    }
+
+    private void BuyCoinConfirmed()
+    {
+        ResourceManager resource = ResourceManager.Instance;
+
+        if (resource == null ||
+            !resource.SpendResource(ResourceType.Coin, buyCoin))
+            return;
+
+        UnlockTheme();
+    }
+
+    private void BuyGemConfirmed()
+    {
+        ResourceManager resource = ResourceManager.Instance;
+
+        if (resource == null ||
+            !resource.SpendResource(ResourceType.Gem, buyGem))
             return;
 
         UnlockTheme();

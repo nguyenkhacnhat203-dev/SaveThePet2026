@@ -46,6 +46,14 @@ public class PopupTheme : PopupBase
     [SerializeField] private ThemeTab beeTab;
     [SerializeField] private ThemeTab beehiveTab;
 
+    [Header("Purchase Question")]
+    [SerializeField] private GameObject question;
+    [SerializeField] private TMP_Text questionText;
+    [SerializeField] private Button yesButton;
+    [SerializeField] private Button noButton;
+
+    private Action confirmPurchase;
+
     private BaseTheme currentThemeDog;
     private BaseTheme currentThemeBee;
     private BaseTheme currentThemeBeehive;
@@ -63,6 +71,7 @@ public class PopupTheme : PopupBase
     {
         base.Start();
 
+        SetupQuestion();
         Spawn();
         SetupTabs();
         SelectTab(0);
@@ -88,6 +97,51 @@ public class PopupTheme : PopupBase
         base.OnDisable();
 
         GameAction.OnResourceChanged -= UpdateResourceUI;
+
+        HideQuestion();
+    }
+
+    private void SetupQuestion()
+    {
+        if (question != null)
+            question.SetActive(false);
+
+        yesButton.onClick.RemoveAllListeners();
+        noButton.onClick.RemoveAllListeners();
+
+        yesButton.onClick.AddListener(ConfirmPurchase);
+        noButton.onClick.AddListener(HideQuestion);
+    }
+
+    public void ShowQuestion(string themeName, Action callback)
+    {
+        if (question == null)
+            return;
+
+        confirmPurchase = callback;
+
+        questionText.text = $"Are you ready to buy a {themeName}?";
+
+        question.SetActive(true);
+    }
+
+    private void ConfirmPurchase()
+    {
+        Action callback = confirmPurchase;
+
+        confirmPurchase = null;
+
+        question.SetActive(false);
+
+        callback?.Invoke();
+    }
+
+    private void HideQuestion()
+    {
+        confirmPurchase = null;
+
+        if (question != null)
+            question.SetActive(false);
     }
 
     private void UpdateResourceUI(int coin, int gem)
@@ -123,44 +177,13 @@ public class PopupTheme : PopupBase
             beehiveTheme.Themes
         );
 
-        SpawnThemes(
-            dogTheme,
-            spawnedThemesDog,
-            ThemeCategory.Dog,
-            SelectThemeDog
-        );
+        SpawnThemes(dogTheme, spawnedThemesDog, ThemeCategory.Dog, SelectThemeDog);
+        SpawnThemes(beeTheme, spawnedThemesBee, ThemeCategory.Bee, SelectThemeBee);
+        SpawnThemes(beehiveTheme, spawnedThemesBeehive, ThemeCategory.Beehive, SelectThemeBeehive);
 
-        SpawnThemes(
-            beeTheme,
-            spawnedThemesBee,
-            ThemeCategory.Bee,
-            SelectThemeBee
-        );
-
-        SpawnThemes(
-            beehiveTheme,
-            spawnedThemesBeehive,
-            ThemeCategory.Beehive,
-            SelectThemeBeehive
-        );
-
-        RestoreSelectedTheme(
-            spawnedThemesDog,
-            ThemeCategory.Dog,
-            SelectThemeDog
-        );
-
-        RestoreSelectedTheme(
-            spawnedThemesBee,
-            ThemeCategory.Bee,
-            SelectThemeBee
-        );
-
-        RestoreSelectedTheme(
-            spawnedThemesBeehive,
-            ThemeCategory.Beehive,
-            SelectThemeBeehive
-        );
+        RestoreSelectedTheme(spawnedThemesDog, ThemeCategory.Dog, SelectThemeDog);
+        RestoreSelectedTheme(spawnedThemesBee, ThemeCategory.Bee, SelectThemeBee);
+        RestoreSelectedTheme(spawnedThemesBeehive, ThemeCategory.Beehive, SelectThemeBeehive);
 
         isSpawned = true;
     }
@@ -196,7 +219,8 @@ public class PopupTheme : PopupBase
                 item,
                 unlocked,
                 callback,
-                () => manager.UnlockTheme(category, themeIndex)
+                () => manager.UnlockTheme(category, themeIndex),
+                ShowQuestion
             );
 
             list.Insert(0, baseTheme);
@@ -254,32 +278,17 @@ public class PopupTheme : PopupBase
 
     private void SelectThemeDog(BaseTheme selectedTheme)
     {
-        SelectTheme(
-            selectedTheme,
-            spawnedThemesDog,
-            ref currentThemeDog,
-            ThemeCategory.Dog
-        );
+        SelectTheme(selectedTheme, spawnedThemesDog, ref currentThemeDog, ThemeCategory.Dog);
     }
 
     private void SelectThemeBee(BaseTheme selectedTheme)
     {
-        SelectTheme(
-            selectedTheme,
-            spawnedThemesBee,
-            ref currentThemeBee,
-            ThemeCategory.Bee
-        );
+        SelectTheme(selectedTheme, spawnedThemesBee, ref currentThemeBee, ThemeCategory.Bee);
     }
 
     private void SelectThemeBeehive(BaseTheme selectedTheme)
     {
-        SelectTheme(
-            selectedTheme,
-            spawnedThemesBeehive,
-            ref currentThemeBeehive,
-            ThemeCategory.Beehive
-        );
+        SelectTheme(selectedTheme, spawnedThemesBeehive, ref currentThemeBeehive, ThemeCategory.Beehive);
     }
 
     private void SelectTheme(

@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 6318854238903833622}
   - component: {fileID: 113239915295478271}
   m_Layer: 5
-  m_Name: Btn_BuyCoin
+  m_Name: Btn_BuyGem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 4995508876234524026}
   - component: {fileID: 7753349786145116956}
   m_Layer: 5
-  m_Name: Cost_BuyGem
+  m_Name: Cost_BuyCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -626,7 +626,7 @@ GameObject:
   - component: {fileID: 4610301143935631471}
   - component: {fileID: 2104069751098250306}
   m_Layer: 5
-  m_Name: Cost_BuyCoin
+  m_Name: Cost_BuyGem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -761,7 +761,7 @@ GameObject:
   - component: {fileID: 110009922711944841}
   - component: {fileID: 5641296175710187242}
   m_Layer: 5
-  m_Name: Btn_BuyGem
+  m_Name: Btn_BuyCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -967,8 +967,8 @@ MonoBehaviour:
   Cover: {fileID: 4074899189773015553}
   Tick: {fileID: 2945520866148368988}
   Name_Theme: {fileID: 7765549871299520952}
-  Cost_BuyCoin: {fileID: 2104069751098250306}
-  Cost_BuyGem: {fileID: 7753349786145116956}
-  Btn_BuyCoin: {fileID: 113239915295478271}
-  Btn_BuyGem: {fileID: 5641296175710187242}
+  Cost_BuyCoin: {fileID: 7753349786145116956}
+  Cost_BuyGem: {fileID: 2104069751098250306}
+  Btn_BuyCoin: {fileID: 5641296175710187242}
+  Btn_BuyGem: {fileID: 113239915295478271}
   Img_Theme: {fileID: 5808996916334020372}

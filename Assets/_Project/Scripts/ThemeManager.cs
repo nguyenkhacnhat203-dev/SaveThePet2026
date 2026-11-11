@@ -14,14 +14,20 @@ public class ThemeManager : Singleton<ThemeManager>
     private const string SAVE_KEY = "THEME_DATA";
 
     private ThemeData data;
+
     private DogTheme dogTheme;
+    private BeeTheme beeTheme;
+    private BeehiveTheme beehiveTheme;
 
     protected override void Awake()
     {
         base.Awake();
 
         LoadData();
+
         FindDogTheme();
+        FindBeeTheme();
+        FindBeehiveTheme();
     }
 
     private void FindDogTheme()
@@ -32,10 +38,38 @@ public class ThemeManager : Singleton<ThemeManager>
         dogTheme = FindObjectOfType<DogTheme>(true);
     }
 
+    private void FindBeeTheme()
+    {
+        if (beeTheme != null)
+            return;
+
+        beeTheme = FindObjectOfType<BeeTheme>(true);
+    }
+
+    private void FindBeehiveTheme()
+    {
+        if (beehiveTheme != null)
+            return;
+
+        beehiveTheme = FindObjectOfType<BeehiveTheme>(true);
+    }
+
     public DogTheme GetDogTheme()
     {
         FindDogTheme();
         return dogTheme;
+    }
+
+    public BeeTheme GetBeeTheme()
+    {
+        FindBeeTheme();
+        return beeTheme;
+    }
+
+    public BeehiveTheme GetBeehiveTheme()
+    {
+        FindBeehiveTheme();
+        return beehiveTheme;
     }
 
     public void Initialize(
@@ -57,6 +91,8 @@ public class ThemeManager : Singleton<ThemeManager>
             SaveData();
 
         ApplyDogTheme();
+        ApplyBeeTheme();
+        ApplyBeehiveTheme();
     }
 
     private bool InitializeGroup(
@@ -162,8 +198,20 @@ public class ThemeManager : Singleton<ThemeManager>
 
         SaveData();
 
-        if (category == ThemeCategory.Dog)
-            ApplyDogTheme();
+        switch (category)
+        {
+            case ThemeCategory.Dog:
+                ApplyDogTheme();
+                break;
+
+            case ThemeCategory.Bee:
+                ApplyBeeTheme();
+                break;
+
+            case ThemeCategory.Beehive:
+                ApplyBeehiveTheme();
+                break;
+        }
     }
 
     private bool ValidateSelectedTheme(
@@ -230,6 +278,36 @@ public class ThemeManager : Singleton<ThemeManager>
         dogTheme.SetTheme(selectedIndex);
     }
 
+    public void ApplyBeeTheme()
+    {
+        FindBeeTheme();
+
+        if (beeTheme == null)
+            return;
+
+        int selectedIndex = data.SelectedBeeTheme;
+
+        if (!IsUnlocked(ThemeCategory.Bee, selectedIndex))
+            return;
+
+        beeTheme.SetTheme(selectedIndex);
+    }
+
+    public void ApplyBeehiveTheme()
+    {
+        FindBeehiveTheme();
+
+        if (beehiveTheme == null)
+            return;
+
+        int selectedIndex = data.SelectedBeehiveTheme;
+
+        if (!IsUnlocked(ThemeCategory.Beehive, selectedIndex))
+            return;
+
+        beehiveTheme.SetTheme(selectedIndex);
+    }
+
     private List<bool> GetList(ThemeCategory category)
     {
         switch (category)
@@ -284,5 +362,8 @@ public class ThemeManager : Singleton<ThemeManager>
 
         if (dogTheme != null)
             dogTheme.HideAll();
+
+        if (beehiveTheme != null)
+            beehiveTheme.SetTheme(0);
     }
 }

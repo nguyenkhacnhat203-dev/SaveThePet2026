@@ -21,6 +21,9 @@ public class ResourceManager : Singleton<ResourceManager>
         Data.LoadData(this);
 
         NotifyResourceChanged();
+
+        //AddResource(ResourceType.Coin, 10000);
+        //AddResource(ResourceType.Gem, 10000);
     }
 
     public void AddResource(ResourceType type, int amount)

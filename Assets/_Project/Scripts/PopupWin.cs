@@ -8,7 +8,6 @@ public class PopupWin : PopupBase
     [SerializeField] private TMP_Text bonusCoinText;
 
     private int bonusCoin;
-    private bool hasClaimedReward;
 
     protected override void Start()
     {
@@ -34,10 +33,7 @@ public class PopupWin : PopupBase
 
     public void Claim()
     {
-        if (hasClaimedReward)
-            return;
-
-        hasClaimedReward = true;
+     
 
         ScoreManager.Instance.CalculateWinScore(
             UiManager.Instance.CurrentStarCount,
@@ -53,10 +49,7 @@ public class PopupWin : PopupBase
 
     public void ClaimDoubleReward()
     {
-        if (hasClaimedReward)
-            return;
-
-        hasClaimedReward = true;
+        
 
         ScoreManager.Instance.CalculateWinScore(
             UiManager.Instance.CurrentStarCount,
@@ -66,5 +59,9 @@ public class PopupWin : PopupBase
         int reward = bonusCoin * 2;
 
         ResourceManager.Instance.AddResource(ResourceType.Coin, reward);
+        PopupManager.Instance.ShowPopupNextGame();
+
+        Destroy(gameObject);
+
     }
 }

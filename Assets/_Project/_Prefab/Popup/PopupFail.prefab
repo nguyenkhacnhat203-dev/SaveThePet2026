@@ -490,8 +490,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe03f77b04703f749bb5a21c4ad8261d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smallScale: 0.8
-  bigScale: 0.85
+  smallScale: 0.9
+  bigScale: 0.9
   runTime: 1
 --- !u!114 &2800518644858052953
 MonoBehaviour:
