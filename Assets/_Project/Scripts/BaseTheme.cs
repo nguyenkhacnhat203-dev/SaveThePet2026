@@ -110,6 +110,7 @@ public class BaseTheme : MonoBehaviour
         themeButton = null;
     }
 
+
     private void BuyWithCoin()
     {
         if (isUnlocked || priceType != ThemePriceType.BuyCoin)
@@ -117,8 +118,14 @@ public class BaseTheme : MonoBehaviour
 
         ResourceManager resource = ResourceManager.Instance;
 
-        if (resource == null || resource.Coin < buyCoin)
+        if (resource == null)
             return;
+
+        if (resource.Coin < buyCoin)
+        {
+            PopupManager.Instance.ShowPopupAddCoin();
+            return;
+        }
 
         showQuestion?.Invoke(themeName, BuyCoinConfirmed);
     }
@@ -130,11 +137,18 @@ public class BaseTheme : MonoBehaviour
 
         ResourceManager resource = ResourceManager.Instance;
 
-        if (resource == null || resource.Gem < buyGem)
+        if (resource == null)
             return;
+
+        if (resource.Gem < buyGem)
+        {
+            PopupManager.Instance.ShowPopupAddGem();
+            return;
+        }
 
         showQuestion?.Invoke(themeName, BuyGemConfirmed);
     }
+
 
     private void BuyCoinConfirmed()
     {
@@ -208,4 +222,8 @@ public class BaseTheme : MonoBehaviour
         if (Tick != null)
             Tick.gameObject.SetActive(active);
     }
+
+
+
+
 }

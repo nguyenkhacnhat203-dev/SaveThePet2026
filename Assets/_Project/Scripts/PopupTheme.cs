@@ -101,6 +101,15 @@ public class PopupTheme : PopupBase
         HideQuestion();
     }
 
+    public void ShowPopupCoin()
+    {
+        PopupManager.Instance.ShowPopupAddCoin();
+    }
+    public void ShowPopupGem()
+    {
+        PopupManager.Instance.ShowPopupAddGem();
+    }
+
     private void SetupQuestion()
     {
         if (question != null)

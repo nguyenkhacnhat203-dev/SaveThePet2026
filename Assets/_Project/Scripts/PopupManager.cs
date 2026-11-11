@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class PopupManager : Singleton<PopupManager>
@@ -7,6 +8,7 @@ public class PopupManager : Singleton<PopupManager>
     [SerializeField] private PopupFail popupFailPrefab;
     [SerializeField] private PopupNext popupNextPrefab;
     [SerializeField] private PopupTheme popupThemePrefab;
+    [SerializeField] private PopupAdd popupAddPrefab;
 
     [Header("Popup Parent")]
     [SerializeField] private Transform popupParent;
@@ -14,6 +16,7 @@ public class PopupManager : Singleton<PopupManager>
     private PopupWin popupWin;
     private PopupFail popupFail;
     private PopupTheme popupTheme;
+    private PopupAdd popupAdd;
 
     public void ShowPopupWin()
     {
@@ -50,4 +53,18 @@ public class PopupManager : Singleton<PopupManager>
 
         popupTheme.gameObject.SetActive(true);
     }
+
+
+    public void ShowPopupAddCoin()
+    {
+        PopupAdd popup = Instantiate(popupAddPrefab, popupParent);
+        popup.SetPopupType(PopupAdd.AddType.Coin);
+    }
+
+    public void ShowPopupAddGem()
+    {
+        PopupAdd popup = Instantiate(popupAddPrefab, popupParent);
+        popup.SetPopupType(PopupAdd.AddType.Gem);
+    }
+
 }
