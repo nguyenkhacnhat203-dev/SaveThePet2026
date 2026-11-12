@@ -51,14 +51,14 @@ TagManager:
   - name: BgCanvas
     uniqueID: 3335625771
     locked: 0
-  - name: Wall
-    uniqueID: 377711923
-    locked: 0
   - name: 'Environment '
     uniqueID: 1939027023
     locked: 0
   - name: Hive
     uniqueID: 2558235673
+    locked: 0
+  - name: Wall
+    uniqueID: 377711923
     locked: 0
   - name: Bee
     uniqueID: 2156571869

@@ -7,7 +7,7 @@ public class ScoreManager : Singleton<ScoreManager>
 
     public DataScore Data { get; private set; }
 
-    private void Start()
+    private void Awake()
     {
         Data = new DataScore();
         Data.LoadData(this);
@@ -26,6 +26,8 @@ public class ScoreManager : Singleton<ScoreManager>
     {
         if (starCount <= 0)
             return;
+
+        int currentLevel = LevelManager.Instance.CurrentLevel;
 
         int difficultyMultiplier = 1;
 
@@ -46,12 +48,25 @@ public class ScoreManager : Singleton<ScoreManager>
 
         int earnedScore = starCount * difficultyMultiplier;
 
-        AddScore(earnedScore);
+        int oldScore = Data.LoadLevelScore(currentLevel);
+
+        Score -= oldScore;
+        Score = Mathf.Max(0, Score);
+        Score += earnedScore;
+
+        Data.SaveLevelScore(currentLevel, earnedScore);
+        Data.SaveData(this);
+
+        Debug.Log(
+            $"Level {currentLevel} | Old Score: {oldScore} | New Score: {earnedScore} | Total: {Score}"
+        );
     }
 
     public void ResetScore()
     {
         Score = 0;
+
+        Data.ResetLevelScores(LevelData.LoadLevel());
         Data.SaveData(this);
     }
 }

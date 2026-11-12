@@ -1,4 +1,4 @@
-
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,7 +19,7 @@ public class LevelGroup
 
 public class PopupListLevel : PopupBase
 {
-    public Image blackOverlay;
+    [SerializeField] private Image blackOverlay;
 
     [SerializeField] private BaseListLevel prefab;
 

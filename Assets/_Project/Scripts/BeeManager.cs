@@ -20,7 +20,14 @@ public class BeeManager : Singleton<BeeManager>
 
     private float gapScanTimer = 0f;
     private int nextTargetIndex;
+    private LevelSetup levelSetup;
 
+
+    private void Start()
+    {
+        levelSetup = GetComponentInParent<LevelSetup>();
+
+    }
     public void RegisterBee(Bee bee, Vector3 spawnPosition, List<Transform> targetDogs)
     {
         if (bee == null || bees.Contains(bee))
@@ -460,5 +467,14 @@ public class BeeManager : Singleton<BeeManager>
             Vector2.up * offsetY;
 
         bee.Rb.MovePosition(targetPosition);
+    }
+
+    private void OnTransformParentChanged()
+    {
+        if (levelSetup == null ||
+            !levelSetup.IsChildOfLevelSetup(transform))
+        {
+            Destroy(gameObject);
+        }
     }
 }

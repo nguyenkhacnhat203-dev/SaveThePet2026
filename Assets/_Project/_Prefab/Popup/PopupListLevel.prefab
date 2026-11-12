@@ -967,7 +967,7 @@ MonoBehaviour:
   levelGroup:
     Parent: {fileID: 4785225418116157478}
     Levels:
-    - LevelImage: {fileID: 21300000, guid: 347afc4c61118a84981c66fb58b2481b, type: 3}
+    - LevelImage: {fileID: 21300000, guid: 7c51706349226b64384df07becf1fea2, type: 3}
     - LevelImage: {fileID: 21300000, guid: 6ff9974481dc5d649bfc06e091a7527a, type: 3}
     - LevelImage: {fileID: 21300000, guid: c8cddf02ed5cb7448bf51ed9d03b3282, type: 3}
     - LevelImage: {fileID: 21300000, guid: ccc0e4be71ac4224f9288bd3f4f45e6a, type: 3}
@@ -977,7 +977,6 @@ MonoBehaviour:
     - LevelImage: {fileID: 21300000, guid: d25f38bd450d1ae4db89143bf7516d75, type: 3}
     - LevelImage: {fileID: 21300000, guid: 0954e4ef938d74c4186f86a7ea91ff1c, type: 3}
     - LevelImage: {fileID: 21300000, guid: 33a387a6c86b2834bb1ff44dee481a71, type: 3}
-    - LevelImage: {fileID: 21300000, guid: 69e4e927de692d14cad49282e27043ea, type: 3}
   fadeDuration: 0.25
 --- !u!1 &7162682777071326585
 GameObject:

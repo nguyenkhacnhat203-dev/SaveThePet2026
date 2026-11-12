@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6985017744200956691}
   - component: {fileID: 4440315983659959074}
+  - component: {fileID: 6396876797198862153}
   m_Layer: 6
   m_Name: Bee Home
   m_TagString: Bee
@@ -170,6 +171,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6396876797198862153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512995199667820362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 212d7d5e52aed994ca6f78741d7fc44b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Bee: {fileID: 1512995199667820362}
+  Stinger: {fileID: 2188350703684868325}
+  BeeYellow: {fileID: 21300000, guid: a0119bfddd8f5b94c920a7ea2a4e5f56, type: 3}
+  StingerBeeYellow: {fileID: 21300000, guid: e0ea905a5723bfc44b383b6303fc8d64, type: 3}
+  BeeBlue: {fileID: 21300000, guid: 054771411757b7f42b386b3ca011088a, type: 3}
+  StingerBeeBlue: {fileID: 21300000, guid: 56a91378358109b4da1bd1f5e5e79a41, type: 3}
+  BeeGreen: {fileID: 21300000, guid: d644c31c2d33df2409821238b7d480d6, type: 3}
+  StingerBeeGreen: {fileID: 21300000, guid: d55d432815e649e4db39c6ac148382ed, type: 3}
+  BeeOrange: {fileID: 21300000, guid: 70b731d23d0df9e47a750d17ffaa71a8, type: 3}
+  StingerBeeOrange: {fileID: 21300000, guid: 4dd80d93363ba5e4b81c9b23bb844cc8, type: 3}
+  BeeRed: {fileID: 21300000, guid: bdde16d27b94a0545b15f64b1a490abb, type: 3}
+  StingerBeeRed: {fileID: 21300000, guid: d5923eecfe3962345beb95f665601128, type: 3}
 --- !u!1 &1570071053903675660
 GameObject:
   m_ObjectHideFlags: 0
