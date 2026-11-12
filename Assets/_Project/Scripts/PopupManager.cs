@@ -9,6 +9,7 @@ public class PopupManager : Singleton<PopupManager>
     [SerializeField] private PopupNext popupNextPrefab;
     [SerializeField] private PopupTheme popupThemePrefab;
     [SerializeField] private PopupAdd popupAddPrefab;
+    [SerializeField] private PopupListLevel popupListLevelPrefab;
 
     [Header("Popup Parent")]
     [SerializeField] private Transform popupParent;
@@ -17,6 +18,7 @@ public class PopupManager : Singleton<PopupManager>
     private PopupFail popupFail;
     private PopupTheme popupTheme;
     private PopupAdd popupAdd;
+    private PopupListLevel popupListLevel;
 
     public void ShowPopupWin()
     {
@@ -54,6 +56,13 @@ public class PopupManager : Singleton<PopupManager>
         popupTheme.gameObject.SetActive(true);
     }
 
+    public void ShowPopupListLevel()
+    {
+        if (popupListLevel == null)
+            popupListLevel = Instantiate(popupListLevelPrefab, popupParent);
+
+        popupListLevel.gameObject.SetActive(true);
+    }
 
     public void ShowPopupAddCoin()
     {
@@ -66,5 +75,4 @@ public class PopupManager : Singleton<PopupManager>
         PopupAdd popup = Instantiate(popupAddPrefab, popupParent);
         popup.SetPopupType(PopupAdd.AddType.Gem);
     }
-
 }

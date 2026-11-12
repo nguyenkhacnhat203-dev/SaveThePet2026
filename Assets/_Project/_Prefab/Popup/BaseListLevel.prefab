@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 7324495719104141091}
   - component: {fileID: 7765549871299520952}
   m_Layer: 5
-  m_Name: Name_Theme
+  m_Name: Name_Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -831,3 +831,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03994544ed4d1454bb1ed27ba177f69f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Star1: {fileID: 9023009492933042159}
+  Star2: {fileID: 6911346231738260840}
+  Star3: {fileID: 1562568681170843705}
+  CellStar1: {fileID: 138094208043941530}
+  CellStar2: {fileID: 5115619139718212102}
+  CellStar3: {fileID: 4064108690179579541}
+  Cover: {fileID: 4074899189773015553}
+  Level_Img: {fileID: 5422716062060805828}
+  Name_Level: {fileID: 7765549871299520952}
