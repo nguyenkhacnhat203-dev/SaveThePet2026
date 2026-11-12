@@ -262,6 +262,7 @@ public class LevelManager : Singleton<LevelManager>
     }
 
 
+
     private void StartWinSequence()
     {
         UiManager.Instance.HideCheckingTime();
@@ -269,13 +270,21 @@ public class LevelManager : Singleton<LevelManager>
 
         UiManager.Instance.PlayWinCheckmarkAnimation(() =>
         {
+            int earnedStars = UiManager.Instance.CurrentStarCount;
 
+            LevelData.SaveLevelStars(CurrentLevel, earnedStars);
 
             LevelData.SaveLevel(CurrentLevel + 1);
+
+            //Debug.Log(
+            //    $"[LevelManager] WIN LEVEL {CurrentLevel} | " +
+            //    $"Earned Stars: {earnedStars}"
+            //);
 
             StartCoroutine(ShowPopupWinDelay());
         });
     }
+
 
     private IEnumerator ShowPopupWinDelay()
     {
