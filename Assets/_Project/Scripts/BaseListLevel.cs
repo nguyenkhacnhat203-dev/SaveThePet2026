@@ -20,8 +20,6 @@ public class BaseListLevel : MonoBehaviour
     public TextMeshProUGUI Name_Level;
 
     private int levelIndex;
-    private bool isUnlocked;
-
     private Button levelButton;
 
     public void Setup(
@@ -35,7 +33,6 @@ public class BaseListLevel : MonoBehaviour
             return;
 
         levelIndex = index;
-        isUnlocked = unlocked;
 
         Level_Img.sprite = data.LevelImage;
         Name_Level.text = $"Level {levelIndex}";
@@ -43,7 +40,10 @@ public class BaseListLevel : MonoBehaviour
         UpdateUnlockUI(unlocked);
         UpdateStars(starCount);
 
-        AddLevelButton(onClick);
+        if (unlocked)
+            AddLevelButton(onClick);
+        else
+            RemoveLevelButton();
     }
 
     private void AddLevelButton(Action<int> onClick)
@@ -58,11 +58,21 @@ public class BaseListLevel : MonoBehaviour
 
         levelButton.onClick.AddListener(() =>
         {
-            if (!isUnlocked)
-                return;
-
             onClick?.Invoke(levelIndex);
         });
+    }
+
+    private void RemoveLevelButton()
+    {
+        if (levelButton == null)
+            levelButton = GetComponent<Button>();
+
+        if (levelButton != null)
+        {
+            levelButton.onClick.RemoveAllListeners();
+            Destroy(levelButton);
+            levelButton = null;
+        }
     }
 
     private void UpdateUnlockUI(bool unlocked)

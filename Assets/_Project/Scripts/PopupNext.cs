@@ -8,15 +8,24 @@ public class PopupNext : PopupBase
     public enum PopupType
     {
         Home,
-        Game
+        Game,
+        Replay
     }
 
     private PopupType popupType;
     private Image img;
+    private int replayLevel;
 
     public void SetPopupType(PopupType type)
     {
         popupType = type;
+        OnShow();
+    }
+
+    public void SetReplayLevel(int level)
+    {
+        replayLevel = level;
+        popupType = PopupType.Replay;
         OnShow();
     }
 
@@ -29,7 +38,7 @@ public class PopupNext : PopupBase
         if (Main == null)
             return;
 
-        if (popupType == PopupType.Game)
+        if (popupType == PopupType.Game || popupType == PopupType.Replay)
             GameManager.Instance.ChangeState(GameManager.GameState.Pause);
 
         img = Main.GetComponent<Image>();
@@ -39,7 +48,6 @@ public class PopupNext : PopupBase
 
         DOTween.Kill(Main.transform);
         DOTween.Kill(img);
-
 
         Main.transform.localScale = Vector3.one;
 
@@ -58,11 +66,16 @@ public class PopupNext : PopupBase
                     LevelManager.Instance.CreateLevel();
                     UiManager.Instance.ShowGameUi();
                 }
-               else if (popupType == PopupType.Home)
+                else if (popupType == PopupType.Home)
                 {
                     UiManager.Instance.ShowHomeUi();
                     LevelManager.Instance.ResetLevel();
-
+                }
+                else if (popupType == PopupType.Replay)
+                {
+                    LevelData.SaveLevel(replayLevel);
+                    LevelManager.Instance.CreateLevel();
+                    UiManager.Instance.ShowGameUi();
                 }
 
                 img.DOFade(0f, 0.25f)
@@ -73,18 +86,12 @@ public class PopupNext : PopupBase
 
     public override void DestroyPopup()
     {
-
-
-
-
         Destroy(gameObject);
-
     }
 
     private void OnDestroy()
     {
-
-        GameManager.Instance.ChangeState(GameManager.GameState.Playing);
-
+        if (GameManager.Instance != null)
+            GameManager.Instance.ChangeState(GameManager.GameState.Playing);
     }
 }

@@ -48,6 +48,12 @@ public class PopupManager : Singleton<PopupManager>
         popup.SetPopupType(PopupNext.PopupType.Game);
     }
 
+    public void ShowPopupNextReplay(int level)
+    {
+        PopupNext popup = Instantiate(popupNextPrefab, popupParent);
+        popup.SetReplayLevel(level);
+    }
+
     public void ShowPopupTheme()
     {
         if (popupTheme == null)

@@ -89,9 +89,7 @@ public class PopupListLevel : PopupBase
         if (level <= 0 || level > levelGroup.Levels.Count)
             return;
 
-        LevelData.SaveLevel(level);
-
-        LevelManager.Instance.CreateLevel();
+        PopupManager.Instance.ShowPopupNextReplay(level);
 
         DestroyPopup();
     }
