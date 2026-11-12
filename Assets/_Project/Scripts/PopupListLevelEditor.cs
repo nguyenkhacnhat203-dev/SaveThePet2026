@@ -9,6 +9,8 @@ public class PopupListLevelEditor : Editor
     private SerializedProperty levelGroup;
     private SerializedProperty parent;
     private SerializedProperty levels;
+    private SerializedProperty blackOverlay;
+    private SerializedProperty fadeDuration;
 
     private void OnEnable()
     {
@@ -17,6 +19,9 @@ public class PopupListLevelEditor : Editor
 
         parent = levelGroup.FindPropertyRelative("Parent");
         levels = levelGroup.FindPropertyRelative("Levels");
+
+        blackOverlay = serializedObject.FindProperty("blackOverlay");
+        fadeDuration = serializedObject.FindProperty("fadeDuration");
     }
 
     public override void OnInspectorGUI()
@@ -24,6 +29,12 @@ public class PopupListLevelEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.PropertyField(prefab);
+        EditorGUILayout.Space(10);
+
+        EditorGUILayout.LabelField("Replay Transition", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(blackOverlay);
+        EditorGUILayout.PropertyField(fadeDuration);
+
         EditorGUILayout.Space(10);
 
         EditorGUILayout.LabelField("Level Group", EditorStyles.boldLabel);
@@ -67,7 +78,10 @@ public class PopupListLevelEditor : Editor
         if (GUILayout.Button("Add Level"))
         {
             levels.InsertArrayElementAtIndex(levels.arraySize);
-            SerializedProperty newElement = levels.GetArrayElementAtIndex(levels.arraySize - 1);
+
+            SerializedProperty newElement =
+                levels.GetArrayElementAtIndex(levels.arraySize - 1);
+
             newElement.FindPropertyRelative("LevelImage").objectReferenceValue = null;
         }
 

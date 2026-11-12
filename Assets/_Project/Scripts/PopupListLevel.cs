@@ -1,6 +1,8 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 [System.Serializable]
 public class LevelItem
@@ -14,21 +16,27 @@ public class LevelGroup
     public Transform Parent;
     public List<LevelItem> Levels = new List<LevelItem>();
 }
+
 public class PopupListLevel : PopupBase
 {
+    public Image blackOverlay;
+
     [SerializeField] private BaseListLevel prefab;
 
     [Header("Level Group")]
     [SerializeField] private LevelGroup levelGroup;
 
+    [Header("Replay Transition")]
+    [SerializeField] private float fadeDuration = 0.25f;
+
     private readonly List<BaseListLevel> spawnedLevels = new List<BaseListLevel>();
 
     private bool isSpawned;
+    private bool isTransitioning;
 
     protected override void Start()
     {
         base.Start();
-
         Spawn();
     }
 
@@ -41,7 +49,6 @@ public class PopupListLevel : PopupBase
             return;
 
         SpawnLevels();
-
         isSpawned = true;
     }
 
@@ -60,15 +67,10 @@ public class PopupListLevel : PopupBase
                 continue;
 
             int levelIndex = i + 1;
-
             bool unlocked = levelIndex <= currentLevel;
-
             int starCount = LevelData.LoadLevelStars(levelIndex);
 
-            BaseListLevel baseLevel = Instantiate(
-                prefab,
-                levelGroup.Parent
-            );
+            BaseListLevel baseLevel = Instantiate(prefab, levelGroup.Parent);
 
             baseLevel.transform.SetAsFirstSibling();
 
@@ -86,12 +88,32 @@ public class PopupListLevel : PopupBase
 
     private void OnClickLevel(int level)
     {
+        if (isTransitioning)
+            return;
+
         if (level <= 0 || level > levelGroup.Levels.Count)
             return;
 
-        PopupManager.Instance.ShowPopupNextReplay(level);
+        if (blackOverlay == null)
+            return;
 
-        DestroyPopup();
+        isTransitioning = true;
+
+        blackOverlay.gameObject.SetActive(true);
+
+        Color color = blackOverlay.color;
+        color.a = 0f;
+        blackOverlay.color = color;
+
+        blackOverlay.raycastTarget = true;
+
+        blackOverlay.DOFade(1f, fadeDuration)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                PopupManager.Instance.ShowPopupNextReplay(level);
+                DestroyPopup();
+            });
     }
 
     public void Refresh()
@@ -103,7 +125,6 @@ public class PopupListLevel : PopupBase
         }
 
         spawnedLevels.Clear();
-
         isSpawned = false;
 
         Spawn();
@@ -112,5 +133,11 @@ public class PopupListLevel : PopupBase
     public override void DestroyPopup()
     {
         Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (blackOverlay != null)
+            DOTween.Kill(blackOverlay);
     }
 }

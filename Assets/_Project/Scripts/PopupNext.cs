@@ -51,7 +51,21 @@ public class PopupNext : PopupBase
 
         Main.transform.localScale = Vector3.one;
 
+        img.raycastTarget = true;
+
         Color color = img.color;
+
+        if (popupType == PopupType.Replay)
+        {
+            color.a = 1f;
+            img.color = color;
+
+            img.raycastTarget = false;
+
+            ExecuteTransition();
+            return;
+        }
+
         color.a = 0f;
         img.color = color;
 
@@ -60,28 +74,32 @@ public class PopupNext : PopupBase
             .OnComplete(() =>
             {
                 img.raycastTarget = false;
-
-                if (popupType == PopupType.Game)
-                {
-                    LevelManager.Instance.CreateLevel();
-                    UiManager.Instance.ShowGameUi();
-                }
-                else if (popupType == PopupType.Home)
-                {
-                    UiManager.Instance.ShowHomeUi();
-                    LevelManager.Instance.ResetLevel();
-                }
-                else if (popupType == PopupType.Replay)
-                {
-                    LevelData.SaveLevel(replayLevel);
-                    LevelManager.Instance.CreateLevel();
-                    UiManager.Instance.ShowGameUi();
-                }
-
-                img.DOFade(0f, 0.25f)
-                    .SetUpdate(true)
-                    .OnComplete(DestroyPopup);
+                ExecuteTransition();
             });
+    }
+
+    private void ExecuteTransition()
+    {
+        if (popupType == PopupType.Game)
+        {
+            LevelManager.Instance.CreateLevel();
+            UiManager.Instance.ShowGameUi();
+        }
+        else if (popupType == PopupType.Home)
+        {
+            UiManager.Instance.ShowHomeUi();
+            LevelManager.Instance.ResetLevel();
+        }
+        else if (popupType == PopupType.Replay)
+        {
+            LevelData.SaveLevel(replayLevel);
+            LevelManager.Instance.CreateLevel();
+            UiManager.Instance.ShowGameUi();
+        }
+
+        img.DOFade(0f, 0.25f)
+            .SetUpdate(true)
+            .OnComplete(DestroyPopup);
     }
 
     public override void DestroyPopup()
