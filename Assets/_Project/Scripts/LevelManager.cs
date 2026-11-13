@@ -21,14 +21,17 @@ public class LevelManager : Singleton<LevelManager>
 
     private Coroutine checkingResultCoroutine;
 
-    public int CurrentLevel { get; private set; }
+    public int CurrentLevel;
     public LevelDifficulty CurrentDifficulty;
     public int CurrentBonusCoin;
 
 
     public bool IsFailing => isFailing;
 
-  
+    private void Start()
+    {
+ 
+    }
 
     private void Update()
     {
@@ -45,22 +48,21 @@ public class LevelManager : Singleton<LevelManager>
 
     public void CreateLevel()
     {
-        StartCoroutine(CreateLevelCoroutine());
+        StartCoroutine(CreateLevelCoroutine(LevelData.LoadLevel()));
     }
 
-    private IEnumerator CreateLevelCoroutine()
+    public void CreateLevel(int level)
     {
-        int level = LevelData.LoadLevel();
+        StartCoroutine(CreateLevelCoroutine(level));
+    }
 
+    private IEnumerator CreateLevelCoroutine(int level)
+    {
         if (level <= 0 || level > levelPrefabs.Count)
-        {
             yield break;
-        }
 
         if (levelPrefabs[level - 1] == null)
-        {
             yield break;
-        }
 
         StopChecking();
 
@@ -100,7 +102,7 @@ public class LevelManager : Singleton<LevelManager>
         UiManager.Instance.ResetLevelUI();
         UiManager.Instance.Level_Text.text = "Level " + CurrentLevel;
 
-        LevelData.SaveLevel(CurrentLevel);
+
     }
 
     private void StopChecking()

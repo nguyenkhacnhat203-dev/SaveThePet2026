@@ -92,8 +92,7 @@ public class PopupNext : PopupBase
         }
         else if (popupType == PopupType.Replay)
         {
-            LevelData.SaveLevel(replayLevel);
-            LevelManager.Instance.CreateLevel();
+            LevelManager.Instance.CreateLevel(replayLevel);
             UiManager.Instance.ShowGameUi();
         }
 

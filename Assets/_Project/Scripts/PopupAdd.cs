@@ -26,6 +26,8 @@ public class PopupAdd : PopupBase
     [SerializeField] private TMP_Text gemAmountText;
     [SerializeField] private TMP_Text titleText;
 
+    private bool isRewardPending;
+
     public void SetPopupType(AddType type)
     {
         addType = type;
@@ -58,20 +60,34 @@ public class PopupAdd : PopupBase
 
     public void AddResource()
     {
-        switch (addType)
-        {
-            case AddType.Coin:
-                ResourceManager.Instance.AddResource(
-                    ResourceType.Coin, addCoinAmount);
-                break;
+        if (isRewardPending)
+            return;
 
-            case AddType.Gem:
-                ResourceManager.Instance.AddResource(
-                    ResourceType.Gem, addGemAmount);
-                break;
+        if (AdsManager.Instance == null)
+        {
+            Debug.LogWarning("AdsManager not found!");
+            return;
         }
 
-        DestroyPopup();
+        isRewardPending = true;
+
+        AdsManager.Instance.ShowRewarded(() =>
+        {
+            switch (addType)
+            {
+                case AddType.Coin:
+                    ResourceManager.Instance.AddResource(
+                        ResourceType.Coin, addCoinAmount);
+                    break;
+
+                case AddType.Gem:
+                    ResourceManager.Instance.AddResource(
+                        ResourceType.Gem, addGemAmount);
+                    break;
+            }
+
+            DestroyPopup();
+        });
     }
 
     public override void DestroyPopup()

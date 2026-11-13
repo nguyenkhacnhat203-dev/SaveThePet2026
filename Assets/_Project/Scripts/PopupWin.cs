@@ -1,6 +1,6 @@
 
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class PopupWin : PopupBase
 {
@@ -51,17 +51,24 @@ public class PopupWin : PopupBase
     {
         
 
-        ScoreManager.Instance.CalculateWinScore(
-            UiManager.Instance.CurrentStarCount,
-            LevelManager.Instance.CurrentDifficulty
-        );
+  
 
-        int reward = bonusCoin * 2;
 
-        ResourceManager.Instance.AddResource(ResourceType.Coin, reward);
-        PopupManager.Instance.ShowPopupNextGame();
 
-        Destroy(gameObject);
+        AdsManager.Instance.ShowRewarded(() =>
+        {
+            ScoreManager.Instance.CalculateWinScore(
+       UiManager.Instance.CurrentStarCount,
+       LevelManager.Instance.CurrentDifficulty
+           );
+
+            int reward = bonusCoin * 2;
+
+            ResourceManager.Instance.AddResource(ResourceType.Coin, reward);
+            PopupManager.Instance.ShowPopupNextGame();
+
+            Destroy(gameObject);
+        });
 
     }
 }
