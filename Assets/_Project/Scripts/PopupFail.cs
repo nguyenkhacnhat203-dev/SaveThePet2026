@@ -23,8 +23,7 @@ public class PopupFail : PopupBase
     {
         int currentLevel = LevelManager.Instance.CurrentLevel;
         int unlockedLevel = LevelData.LoadLevel();
-        Debug.Log(currentLevel);
-        Debug.Log(unlockedLevel);
+
         if (currentLevel < unlockedLevel)
         {
             skipWithAdsButton.SetActive(false);
@@ -50,21 +49,30 @@ public class PopupFail : PopupBase
 
     public void SkipWithADS()
     {
-      
+        if (AdsManager.Instance == null)
+            return;
 
-        AdsManager.Instance.ShowRewarded(() =>
+        if (AdsManager.Instance.IsAdsDisabledByRemoteConfig ||
+            IAPManager.Instance.IsRemoveAdsPurchased)
         {
-            LevelData.SaveLevel(LevelManager.Instance.CurrentLevel + 1);
-            PopupManager.Instance.ShowPopupNextGame();
-            DestroyPopup();
-        });
+            SkipReward();
+            return;
+        }
+
+        AdsManager.Instance.ShowRewarded(SkipReward);
+    }
+
+    private void SkipReward()
+    {
+        LevelData.SaveLevel(LevelManager.Instance.CurrentLevel + 1);
+        PopupManager.Instance.ShowPopupNextGame();
+        DestroyPopup();
     }
 
     public void SkipWithoutADS()
     {
      
 
-        int currentLevel = LevelManager.Instance.CurrentLevel;
         int unlockedLevel = LevelData.LoadLevel();
 
         blackOverlay.gameObject.SetActive(true);
@@ -86,9 +94,37 @@ public class PopupFail : PopupBase
 
     public void Replay()
     {
-       
-        PopupManager.Instance.ShowPopupNextGame();
-        DestroyPopup();
+        int currentLevel = LevelManager.Instance.CurrentLevel;
+        int unlockedLevel = LevelData.LoadLevel();
+
+        if (currentLevel < unlockedLevel)
+        {
+
+            blackOverlay.gameObject.SetActive(true);
+
+            Color color = blackOverlay.color;
+            color.a = 0f;
+            blackOverlay.color = color;
+
+            blackOverlay.raycastTarget = true;
+
+            blackOverlay.DOFade(1f, fadeDuration)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    PopupManager.Instance.ShowPopupNextReplay(currentLevel);
+                    DestroyPopup();
+                });
+
+        }
+        if (currentLevel == unlockedLevel)
+        {
+
+            PopupManager.Instance.ShowPopupNextGame();
+            DestroyPopup();
+
+        }
+
     }
 
     public override void DestroyPopup()

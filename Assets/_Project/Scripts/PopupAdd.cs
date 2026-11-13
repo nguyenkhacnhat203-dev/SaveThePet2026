@@ -64,32 +64,37 @@ public class PopupAdd : PopupBase
             return;
 
         if (AdsManager.Instance == null)
-        {
-            Debug.LogWarning("AdsManager not found!");
             return;
-        }
 
         isRewardPending = true;
 
-        AdsManager.Instance.ShowRewarded(() =>
+        if (AdsManager.Instance.IsAdsDisabledByRemoteConfig ||
+            IAPManager.Instance.IsRemoveAdsPurchased)
         {
-            switch (addType)
-            {
-                case AddType.Coin:
-                    ResourceManager.Instance.AddResource(
-                        ResourceType.Coin, addCoinAmount);
-                    break;
+            ReceiveReward();
+            return;
+        }
 
-                case AddType.Gem:
-                    ResourceManager.Instance.AddResource(
-                        ResourceType.Gem, addGemAmount);
-                    break;
-            }
-
-            DestroyPopup();
-        });
+        AdsManager.Instance.ShowRewarded(ReceiveReward);
     }
 
+    private void ReceiveReward()
+    {
+        switch (addType)
+        {
+            case AddType.Coin:
+                ResourceManager.Instance.AddResource(
+                    ResourceType.Coin, addCoinAmount);
+                break;
+
+            case AddType.Gem:
+                ResourceManager.Instance.AddResource(
+                    ResourceType.Gem, addGemAmount);
+                break;
+        }
+
+        DestroyPopup();
+    }
     public override void DestroyPopup()
     {
         Destroy(gameObject);

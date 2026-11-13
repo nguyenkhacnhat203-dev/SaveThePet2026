@@ -10,6 +10,17 @@ public class AdsManager : Singleton<AdsManager>
     private RewardedAd rewardedAd;
     private AppOpenAd appOpenAd;
 
+    [Header("Ads Control")]
+    public bool IsAdsDisabledByRemoteConfig;
+
+    private IAPManager iapManager;
+
+    private bool IsRemoveAdsPurchased =>
+        iapManager != null && iapManager.IsRemoveAdsPurchased;
+
+    private bool IsAdsDisabled =>
+        IsRemoveAdsPurchased || IsAdsDisabledByRemoteConfig;
+
     [Header("AdMob Test IDs")]
     [SerializeField] private string bannerID = "ca-app-pub-3940256099942544/6300978111";
     [SerializeField] private string interID = "ca-app-pub-3940256099942544/1033173712";
@@ -23,14 +34,30 @@ public class AdsManager : Singleton<AdsManager>
 
     private void Start()
     {
-        InitializeAds();
+        iapManager = FindObjectOfType<IAPManager>();
+
+        if (iapManager != null)
+        {
+            iapManager.OnPurchaseSuccess += HandlePurchaseSuccess;
+        }
+
+        RefreshAdsState();
+
+        if (!IsAdsDisabled)
+        {
+            InitializeAds();
+        }
     }
 
     private void InitializeAds()
     {
+        if (IsAdsDisabled)
+            return;
+
         MobileAds.Initialize(init =>
         {
-            //Debug.Log("AdMob Initialized");
+            if (IsAdsDisabled)
+                return;
 
             LoadBanner();
             LoadInterstitial();
@@ -40,244 +67,26 @@ public class AdsManager : Singleton<AdsManager>
     }
 
     // =========================================================
-    // BANNER
+    // ADS CONTROL
     // =========================================================
 
-    public void LoadBanner()
+    private void HandlePurchaseSuccess(string productId)
     {
-        if (banner != null)
-            banner.Destroy();
-
-        banner = new BannerView(
-            bannerID,
-            AdSize.Banner,
-            AdPosition.Bottom
-        );
-
-        banner.LoadAd(new AdRequest());
-
-        //Debug.Log("Banner Load Requested");
-    }
-
-    public void ShowBanner()
-    {
-        if (banner != null)
-            banner.Show();
-    }
-
-    public void HideBanner()
-    {
-        if (banner != null)
-            banner.Hide();
-    }
-
-    // =========================================================
-    // INTERSTITIAL
-    // =========================================================
-
-    public void LoadInterstitial()
-    {
-        InterstitialAd.Load(
-            interID,
-            new AdRequest(),
-            (ad, error) =>
-            {
-                if (error != null)
-                {
-                    //Debug.LogWarning("Interstitial Load Failed: " + error);
-                    return;
-                }
-
-                if (interstitial != null)
-                    interstitial.Destroy();
-
-                interstitial = ad;
-
-                //Debug.Log("Interstitial Loaded");
-
-                interstitial.OnAdFullScreenContentClosed += () =>
-                {
-                    //Debug.Log("Interstitial Closed");
-
-                    interstitial.Destroy();
-                    interstitial = null;
-
-                    LoadInterstitial();
-                };
-
-                interstitial.OnAdFullScreenContentFailed += error =>
-                {
-                    //Debug.LogWarning("Interstitial Show Failed: " + error);
-
-                    interstitial.Destroy();
-                    interstitial = null;
-
-                    LoadInterstitial();
-                };
-            }
-        );
-    }
-
-    public void ShowInterstitial()
-    {
-        if (interstitial != null && interstitial.CanShowAd())
-        {
-            interstitial.Show();
-            //Debug.Log("Showing Interstitial");
-        }
-        else
-        {
-            //Debug.Log("Interstitial is not ready.");
-        }
-    }
-
-    // =========================================================
-    // REWARDED
-    // =========================================================
-
-    public void LoadRewarded()
-    {
-        RewardedAd.Load(
-            rewardID,
-            new AdRequest(),
-            (ad, error) =>
-            {
-                if (error != null)
-                {
-                    //Debug.LogWarning("Rewarded Load Failed: " + error);
-                    return;
-                }
-
-                if (rewardedAd != null)
-                    rewardedAd.Destroy();
-
-                rewardedAd = ad;
-
-                //Debug.Log("Rewarded Loaded");
-
-                rewardedAd.OnAdFullScreenContentClosed += () =>
-                {
-                    //Debug.Log("Rewarded Closed");
-
-                    if (rewardEarned)
-                        onRewardAndClosed?.Invoke();
-
-                    onRewardAndClosed = null;
-                    rewardEarned = false;
-
-                    rewardedAd.Destroy();
-                    rewardedAd = null;
-
-                    LoadRewarded();
-                };
-
-                rewardedAd.OnAdFullScreenContentFailed += error =>
-                {
-                    //Debug.LogWarning("Rewarded Show Failed: " + error);
-
-                    onRewardAndClosed = null;
-                    rewardEarned = false;
-
-                    rewardedAd.Destroy();
-                    rewardedAd = null;
-
-                    LoadRewarded();
-                };
-            }
-        );
-    }
-
-    public void ShowRewarded(Action onRewardAndClosed)
-    {
-        if (rewardedAd == null || !rewardedAd.CanShowAd())
-        {
-            //Debug.Log("Rewarded is not ready.");
+        if (productId != "remove_ads")
             return;
-        }
 
-        this.onRewardAndClosed = onRewardAndClosed;
-        rewardEarned = false;
-
-        rewardedAd.Show(reward =>
-        {
-            rewardEarned = true;
-            //Debug.Log("Reward Earned");
-        });
+        RefreshAdsState();
     }
 
-    // =========================================================
-    // APP OPEN
-    // =========================================================
-
-    public void LoadAppOpen()
+    public void RefreshAdsState()
     {
-        AppOpenAd.Load(
-            appOpenID,
-            new AdRequest(),
-            (ad, error) =>
-            {
-                if (error != null)
-                {
-                    //Debug.LogWarning("AppOpen Load Failed: " + error);
-                    return;
-                }
-
-                if (appOpenAd != null)
-                    appOpenAd.Destroy();
-
-                appOpenAd = ad;
-
-                //Debug.Log("AppOpen Loaded");
-
-                appOpenAd.OnAdFullScreenContentClosed += () =>
-                {
-                    //Debug.Log("AppOpen Closed");
-
-                    onAppOpenClosed?.Invoke();
-                    onAppOpenClosed = null;
-
-                    appOpenAd.Destroy();
-                    appOpenAd = null;
-
-                    LoadAppOpen();
-                };
-
-                appOpenAd.OnAdFullScreenContentFailed += error =>
-                {
-                    //Debug.LogWarning("AppOpen Show Failed: " + error);
-
-                    onAppOpenClosed?.Invoke();
-                    onAppOpenClosed = null;
-
-                    appOpenAd.Destroy();
-                    appOpenAd = null;
-
-                    LoadAppOpen();
-                };
-            }
-        );
-    }
-
-    public void ShowAppOpen(Action onClosed = null)
-    {
-        if (appOpenAd != null && appOpenAd.CanShowAd())
+        if (IsAdsDisabled)
         {
-            onAppOpenClosed = onClosed;
-            appOpenAd.Show();
-            //Debug.Log("Showing AppOpen");
-        }
-        else
-        {
-            //Debug.Log("AppOpen is not ready.");
-            onClosed?.Invoke();
+            DisableAllAds();
         }
     }
 
-    // =========================================================
-    // CLEANUP
-    // =========================================================
-
-    private void OnDestroy()
+    private void DisableAllAds()
     {
         if (banner != null)
         {
@@ -302,5 +111,261 @@ public class AdsManager : Singleton<AdsManager>
             appOpenAd.Destroy();
             appOpenAd = null;
         }
+
+        onRewardAndClosed = null;
+        onAppOpenClosed = null;
+        rewardEarned = false;
+    }
+
+    // =========================================================
+    // BANNER
+    // =========================================================
+
+    public void LoadBanner()
+    {
+        if (IsAdsDisabled)
+            return;
+
+        if (banner != null)
+            banner.Destroy();
+
+        banner = new BannerView(
+            bannerID,
+            AdSize.Banner,
+            AdPosition.Bottom
+        );
+
+        banner.LoadAd(new AdRequest());
+    }
+
+    public void ShowBanner()
+    {
+        if (IsAdsDisabled || banner == null)
+            return;
+
+        banner.Show();
+    }
+
+    public void HideBanner()
+    {
+        if (banner != null)
+            banner.Hide();
+    }
+
+    // =========================================================
+    // INTERSTITIAL
+    // =========================================================
+
+    public void LoadInterstitial()
+    {
+        if (IsAdsDisabled)
+            return;
+
+        InterstitialAd.Load(
+            interID,
+            new AdRequest(),
+            (ad, error) =>
+            {
+                if (IsAdsDisabled)
+                {
+                    ad?.Destroy();
+                    return;
+                }
+
+                if (error != null)
+                    return;
+
+                if (interstitial != null)
+                    interstitial.Destroy();
+
+                interstitial = ad;
+
+                interstitial.OnAdFullScreenContentClosed += () =>
+                {
+                    interstitial?.Destroy();
+                    interstitial = null;
+
+                    LoadInterstitial();
+                };
+
+                interstitial.OnAdFullScreenContentFailed += error =>
+                {
+                    interstitial?.Destroy();
+                    interstitial = null;
+
+                    LoadInterstitial();
+                };
+            }
+        );
+    }
+
+    public void ShowInterstitial()
+    {
+        if (IsAdsDisabled)
+            return;
+
+        if (interstitial != null && interstitial.CanShowAd())
+        {
+            interstitial.Show();
+        }
+    }
+
+    // =========================================================
+    // REWARDED
+    // =========================================================
+
+    public void LoadRewarded()
+    {
+        if (IsAdsDisabled)
+            return;
+
+        RewardedAd.Load(
+            rewardID,
+            new AdRequest(),
+            (ad, error) =>
+            {
+                if (IsAdsDisabled)
+                {
+                    ad?.Destroy();
+                    return;
+                }
+
+                if (error != null)
+                    return;
+
+                if (rewardedAd != null)
+                    rewardedAd.Destroy();
+
+                rewardedAd = ad;
+
+                rewardedAd.OnAdFullScreenContentClosed += () =>
+                {
+                    if (rewardEarned)
+                        onRewardAndClosed?.Invoke();
+
+                    onRewardAndClosed = null;
+                    rewardEarned = false;
+
+                    rewardedAd?.Destroy();
+                    rewardedAd = null;
+
+                    LoadRewarded();
+                };
+
+                rewardedAd.OnAdFullScreenContentFailed += error =>
+                {
+                    onRewardAndClosed = null;
+                    rewardEarned = false;
+
+                    rewardedAd?.Destroy();
+                    rewardedAd = null;
+
+                    LoadRewarded();
+                };
+            }
+        );
+    }
+
+    public void ShowRewarded(Action onRewardAndClosed)
+    {
+        if (IsAdsDisabled)
+            return;
+
+        if (rewardedAd == null || !rewardedAd.CanShowAd())
+            return;
+
+        this.onRewardAndClosed = onRewardAndClosed;
+        rewardEarned = false;
+
+        rewardedAd.Show(reward =>
+        {
+            rewardEarned = true;
+        });
+    }
+
+    // =========================================================
+    // APP OPEN
+    // =========================================================
+
+    public void LoadAppOpen()
+    {
+        if (IsAdsDisabled)
+            return;
+
+        AppOpenAd.Load(
+            appOpenID,
+            new AdRequest(),
+            (ad, error) =>
+            {
+                if (IsAdsDisabled)
+                {
+                    ad?.Destroy();
+                    return;
+                }
+
+                if (error != null)
+                    return;
+
+                if (appOpenAd != null)
+                    appOpenAd.Destroy();
+
+                appOpenAd = ad;
+
+                appOpenAd.OnAdFullScreenContentClosed += () =>
+                {
+                    onAppOpenClosed?.Invoke();
+                    onAppOpenClosed = null;
+
+                    appOpenAd?.Destroy();
+                    appOpenAd = null;
+
+                    LoadAppOpen();
+                };
+
+                appOpenAd.OnAdFullScreenContentFailed += error =>
+                {
+                    onAppOpenClosed?.Invoke();
+                    onAppOpenClosed = null;
+
+                    appOpenAd?.Destroy();
+                    appOpenAd = null;
+
+                    LoadAppOpen();
+                };
+            }
+        );
+    }
+
+    public void ShowAppOpen(Action onClosed = null)
+    {
+        if (IsAdsDisabled)
+        {
+            onClosed?.Invoke();
+            return;
+        }
+
+        if (appOpenAd != null && appOpenAd.CanShowAd())
+        {
+            onAppOpenClosed = onClosed;
+            appOpenAd.Show();
+        }
+        else
+        {
+            onClosed?.Invoke();
+        }
+    }
+
+    // =========================================================
+    // CLEANUP
+    // =========================================================
+
+    private void OnDestroy()
+    {
+        if (iapManager != null)
+        {
+            iapManager.OnPurchaseSuccess -= HandlePurchaseSuccess;
+        }
+
+        DisableAllAds();
     }
 }

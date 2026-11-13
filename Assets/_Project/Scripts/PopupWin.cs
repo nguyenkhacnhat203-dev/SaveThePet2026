@@ -52,21 +52,32 @@ public class PopupWin : PopupBase
 
     public void ClaimDoubleReward()
     {
-        AdsManager.Instance.ShowRewarded(() =>
+        if (AdsManager.Instance == null)
+            return;
+
+        if (AdsManager.Instance.IsAdsDisabledByRemoteConfig ||
+            IAPManager.Instance.IsRemoveAdsPurchased)
         {
-            ScoreManager.Instance.CalculateWinScore(
-                UiManager.Instance.CurrentStarCount,
-                LevelManager.Instance.CurrentDifficulty
-            );
+            ReceiveDoubleReward();
+            return;
+        }
 
-            int reward = bonusCoin * 2;
-
-            ResourceManager.Instance.AddResource(ResourceType.Coin, reward);
-
-            NextLevel();
-        });
+        AdsManager.Instance.ShowRewarded(ReceiveDoubleReward);
     }
 
+    private void ReceiveDoubleReward()
+    {
+        ScoreManager.Instance.CalculateWinScore(
+            UiManager.Instance.CurrentStarCount,
+            LevelManager.Instance.CurrentDifficulty
+        );
+
+        int reward = bonusCoin * 2;
+
+        ResourceManager.Instance.AddResource(ResourceType.Coin, reward);
+
+        NextLevel();
+    }
     private void NextLevel()
     {
         int currentLevel = LevelManager.Instance.CurrentLevel;

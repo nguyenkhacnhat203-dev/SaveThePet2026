@@ -48,14 +48,12 @@ public class LevelManager : Singleton<LevelManager>
 
     public void CreateLevel()
     {
-        Debug.Log("Gọi level thông thường");
-        Debug.Log(LevelData.LoadLevel());
+       
         StartCoroutine(CreateLevelCoroutine(LevelData.LoadLevel()));
     }
 
     public void CreateLevel(int level)
     {
-        Debug.Log("Gọi level có truyền level");
         StartCoroutine(CreateLevelCoroutine(level));
     }
 
@@ -93,7 +91,6 @@ public class LevelManager : Singleton<LevelManager>
 
         if (currentLevelSetup == null)
         {
-            Debug.LogError($"Level {level} does not have LevelSetup!");
             Destroy(newLevel);
             yield break;
         }
