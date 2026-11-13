@@ -22,8 +22,7 @@ public class ResourceManager : Singleton<ResourceManager>
 
         NotifyResourceChanged();
 
-        //AddResource(ResourceType.Coin, 10000);
-        //AddResource(ResourceType.Gem, 10000);
+        UploadLeaderboard();
     }
 
     public void AddResource(ResourceType type, int amount)
@@ -51,6 +50,9 @@ public class ResourceManager : Singleton<ResourceManager>
 
         Data.SaveData(this);
         NotifyResourceChanged();
+
+        if (type == ResourceType.Star)
+            UploadLeaderboard();
     }
 
     public bool SpendResource(ResourceType type, int amount)
@@ -79,6 +81,9 @@ public class ResourceManager : Singleton<ResourceManager>
         Data.SaveData(this);
         NotifyResourceChanged();
 
+        if (type == ResourceType.Star)
+            UploadLeaderboard();
+
         return true;
     }
 
@@ -105,6 +110,11 @@ public class ResourceManager : Singleton<ResourceManager>
         GameAction.NotifyResourceChanged(Coin, Gem);
     }
 
- 
+    private void UploadLeaderboard()
+    {
+        if (FirebaseManager.Instance == null)
+            return;
 
+        FirebaseManager.Instance.UploadLeaderboard();
+    }
 }

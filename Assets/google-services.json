@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "745096650498",
+    "project_id": "savethepet2026",
+    "storage_bucket": "savethepet2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745096650498:android:bf69ec4eeb43ee560e6c1b",
+        "android_client_info": {
+          "package_name": "com.company.savethepet2026"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHsGvl8UN1qfRoWhLscMj9EvJT0wXCI3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

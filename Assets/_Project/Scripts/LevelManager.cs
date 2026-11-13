@@ -277,10 +277,14 @@ public class LevelManager : Singleton<LevelManager>
         {
             int earnedStars = UiManager.Instance.CurrentStarCount;
 
-            LevelData.SaveLevelStars(CurrentLevel, earnedStars);
+            int bonusStars = LevelData.SaveLevelStars(CurrentLevel, earnedStars);
 
+            if (bonusStars > 0)
+            {
+                ResourceManager.Instance.AddResource(ResourceType.Star, bonusStars);
+            }
 
-            if(CurrentLevel == LevelData.LoadLevel())
+            if (CurrentLevel == LevelData.LoadLevel())
             {
                 LevelData.SaveLevel(CurrentLevel + 1);
 

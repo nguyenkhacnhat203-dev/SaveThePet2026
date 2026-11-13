@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class ScoreManager : Singleton<ScoreManager>
@@ -7,7 +6,7 @@ public class ScoreManager : Singleton<ScoreManager>
 
     public DataScore Data { get; private set; }
 
-    private void Awake()
+    private void Start()
     {
         Data = new DataScore();
         Data.LoadData(this);
@@ -19,7 +18,10 @@ public class ScoreManager : Singleton<ScoreManager>
             return;
 
         Score += amount;
+
         Data.SaveData(this);
+
+        UploadLeaderboard();
     }
 
     public void CalculateWinScore(int starCount, LevelDifficulty difficulty)
@@ -57,6 +59,8 @@ public class ScoreManager : Singleton<ScoreManager>
         Data.SaveLevelScore(currentLevel, earnedScore);
         Data.SaveData(this);
 
+        UploadLeaderboard();
+
         Debug.Log(
             $"Level {currentLevel} | Old Score: {oldScore} | New Score: {earnedScore} | Total: {Score}"
         );
@@ -68,5 +72,15 @@ public class ScoreManager : Singleton<ScoreManager>
 
         Data.ResetLevelScores(LevelData.LoadLevel());
         Data.SaveData(this);
+
+        UploadLeaderboard();
+    }
+
+    private void UploadLeaderboard()
+    {
+        if (FirebaseManager.Instance == null)
+            return;
+
+        FirebaseManager.Instance.UploadLeaderboard();
     }
 }

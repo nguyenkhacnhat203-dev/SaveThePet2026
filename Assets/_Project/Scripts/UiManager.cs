@@ -6,6 +6,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class UiManager : Singleton<UiManager>
 {
@@ -27,6 +28,7 @@ public class UiManager : Singleton<UiManager>
 
     public List<GameObject> Game;
     public List<GameObject> Home;
+    [SerializeField] private Image blackOverlay;
 
 
     [SerializeField] private TMP_Text Coin;
@@ -66,8 +68,39 @@ public class UiManager : Singleton<UiManager>
         if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)
             return;
 
-        PopupManager.Instance.ShowPopupNextGame();
 
+        int currentLevel = LevelManager.Instance.CurrentLevel;
+        int unlockedLevel = LevelData.LoadLevel();
+
+        if (currentLevel < unlockedLevel)
+        {
+
+            GameManager.Instance.ChangeState(GameManager.GameState.Pause);
+
+            blackOverlay.gameObject.SetActive(true);
+
+            Color color = blackOverlay.color;
+            color.a = 0f;
+            blackOverlay.color = color;
+
+            blackOverlay.raycastTarget = true;
+
+            blackOverlay.DOFade(1f, 0.25f)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    PopupManager.Instance.ShowPopupNextReplay(currentLevel); blackOverlay.gameObject.SetActive(false);
+
+                });
+        }
+        if (currentLevel == unlockedLevel)
+        {
+
+         
+            PopupManager.Instance.ShowPopupNextGame();
+
+
+        }
 
     }
 

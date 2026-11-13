@@ -10,23 +10,17 @@ public static class LevelData
     {
         PlayerPrefs.SetInt(CURRENT_LEVEL_KEY, level);
         PlayerPrefs.Save();
-
-        //Debug.Log($"[LevelData] Saved Current Level: {level}");
     }
 
     public static int LoadLevel()
     {
-        int level = PlayerPrefs.GetInt(CURRENT_LEVEL_KEY, 1);
-
-        //Debug.Log($"[LevelData] Loaded Current Level: {level}");
-
-        return level;
+        return PlayerPrefs.GetInt(CURRENT_LEVEL_KEY, 1);
     }
 
-    public static void SaveLevelStars(int level, int starCount)
+    public static int SaveLevelStars(int level, int starCount)
     {
         if (level <= 0)
-            return;
+            return 0;
 
         starCount = Mathf.Clamp(starCount, 0, 3);
 
@@ -36,15 +30,15 @@ public static class LevelData
 
         int newStars = Mathf.Max(oldStars, starCount);
 
-        PlayerPrefs.SetInt(key, newStars);
-        PlayerPrefs.Save();
+        int earnedStars = newStars - oldStars;
 
-        //Debug.Log(
-        //    $"[LevelData] Level {level} | " +
-        //    $"Old Stars: {oldStars} | " +
-        //    $"New Stars: {newStars} | " +
-        //    $"Achieved Stars: {starCount}"
-        //);
+        if (earnedStars > 0)
+        {
+            PlayerPrefs.SetInt(key, newStars);
+            PlayerPrefs.Save();
+        }
+
+        return earnedStars;
     }
 
     public static int LoadLevelStars(int level)
@@ -52,12 +46,6 @@ public static class LevelData
         if (level <= 0)
             return 0;
 
-        string key = LEVEL_STARS_KEY + level;
-
-        int stars = PlayerPrefs.GetInt(key, 0);
-
-        //Debug.Log($"[LevelData] Loaded Level {level}: {stars} Stars");
-
-        return stars;
+        return PlayerPrefs.GetInt(LEVEL_STARS_KEY + level, 0);
     }
 }
