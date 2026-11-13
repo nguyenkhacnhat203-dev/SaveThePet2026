@@ -1,11 +1,18 @@
 
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class PopupWin : PopupBase
 {
+    [Header("Stars & Reward")]
     [SerializeField] private GameObject[] stars;
     [SerializeField] private TMP_Text bonusCoinText;
+
+    [Header("Transition")]
+    [SerializeField] private Image blackOverlay;
+    [SerializeField] private float fadeDuration = 0.25f;
 
     private int bonusCoin;
 
@@ -33,8 +40,6 @@ public class PopupWin : PopupBase
 
     public void Claim()
     {
-     
-
         ScoreManager.Instance.CalculateWinScore(
             UiManager.Instance.CurrentStarCount,
             LevelManager.Instance.CurrentDifficulty
@@ -42,33 +47,64 @@ public class PopupWin : PopupBase
 
         ResourceManager.Instance.AddResource(ResourceType.Coin, bonusCoin);
 
-        PopupManager.Instance.ShowPopupNextGame();
-
-        Destroy(gameObject);
+        NextLevel();
     }
 
     public void ClaimDoubleReward()
     {
-        
-
-  
-
-
-
         AdsManager.Instance.ShowRewarded(() =>
         {
             ScoreManager.Instance.CalculateWinScore(
-       UiManager.Instance.CurrentStarCount,
-       LevelManager.Instance.CurrentDifficulty
-           );
+                UiManager.Instance.CurrentStarCount,
+                LevelManager.Instance.CurrentDifficulty
+            );
 
             int reward = bonusCoin * 2;
 
             ResourceManager.Instance.AddResource(ResourceType.Coin, reward);
-            PopupManager.Instance.ShowPopupNextGame();
 
-            Destroy(gameObject);
+            NextLevel();
         });
+    }
 
+    private void NextLevel()
+    {
+        int currentLevel = LevelManager.Instance.CurrentLevel;
+        int unlockedLevel = LevelData.LoadLevel();
+
+        if (currentLevel == unlockedLevel)
+        {
+            PopupManager.Instance.ShowPopupNextGame();
+            DestroyPopup();
+        }
+        else if (currentLevel < unlockedLevel)
+        {
+            blackOverlay.gameObject.SetActive(true);
+
+            Color color = blackOverlay.color;
+            color.a = 0f;
+            blackOverlay.color = color;
+
+            blackOverlay.raycastTarget = true;
+
+            blackOverlay.DOFade(1f, fadeDuration)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    PopupManager.Instance.ShowPopupNextReplay(currentLevel+1);
+                    DestroyPopup();
+                });
+        }
+    }
+
+    public override void DestroyPopup()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (blackOverlay != null)
+            DOTween.Kill(blackOverlay);
     }
 }
