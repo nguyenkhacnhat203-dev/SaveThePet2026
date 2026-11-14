@@ -5,14 +5,17 @@ using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
 
-[Serializable]
+
+[System.Serializable]
 public class LeaderboardPlayerData
 {
     public string PlayerID;
     public string PlayerName;
     public int Score;
     public int Star;
+    public int DogTheme;
 }
+
 
 public class FirebaseLeaderboardData
 {
@@ -198,5 +201,80 @@ public class FirebaseLeaderboardData
                 Debug.Log("Upload Dog Theme successfully: " + themeIndex);
             });
     }
+
+
+    public void GetLeaderboard(Action<List<LeaderboardPlayerData>> onComplete)
+    {
+        databaseReference
+            .Child("Leaderboard")
+            .OrderByChild("Score")
+            .LimitToLast(100)
+            .GetValueAsync()
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    Debug.LogError("Get leaderboard failed: " + task.Exception);
+                    onComplete?.Invoke(new List<LeaderboardPlayerData>());
+                    return;
+                }
+
+                DataSnapshot leaderboardSnapshot = task.Result;
+
+                databaseReference
+                    .Child("PlayerThemes")
+                    .GetValueAsync()
+                    .ContinueWithOnMainThread(themeTask =>
+                    {
+                        if (themeTask.IsFaulted || themeTask.IsCanceled)
+                        {
+                            Debug.LogError("Get player themes failed: " + themeTask.Exception);
+                            onComplete?.Invoke(new List<LeaderboardPlayerData>());
+                            return;
+                        }
+
+                        DataSnapshot themesSnapshot = themeTask.Result;
+
+                        List<LeaderboardPlayerData> players =
+                            new List<LeaderboardPlayerData>();
+
+                        foreach (DataSnapshot child in leaderboardSnapshot.Children)
+                        {
+                            LeaderboardPlayerData player = new LeaderboardPlayerData();
+
+                            player.PlayerID = child.Child("PlayerID").Value?.ToString()
+                                ?? child.Key;
+
+                            player.PlayerName = child.Child("PlayerName").Value?.ToString()
+                                ?? "Player";
+
+                            int.TryParse(
+                                child.Child("Score").Value?.ToString(),
+                                out player.Score
+                            );
+
+                            int.TryParse(
+                                child.Child("Star").Value?.ToString(),
+                                out player.Star
+                            );
+
+                            int.TryParse(
+                                themesSnapshot
+                                    .Child(player.PlayerID)
+                                    .Child("DogTheme")
+                                    .Value?.ToString(),
+                                out player.DogTheme
+                            );
+
+                            players.Add(player);
+                        }
+
+                        players.Sort((a, b) => b.Score.CompareTo(a.Score));
+
+                        onComplete?.Invoke(players);
+                    });
+            });
+    }
+
 
 }

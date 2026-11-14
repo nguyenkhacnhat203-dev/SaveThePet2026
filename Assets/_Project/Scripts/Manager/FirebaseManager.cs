@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -177,4 +177,18 @@ public class FirebaseManager : Singleton<FirebaseManager>
             dogThemeIndex
         );
     }
+
+
+    public void GetLeaderboard(Action<List<LeaderboardPlayerData>> onComplete)
+    {
+        if (!IsInitialized || LeaderboardData == null)
+        {
+            Debug.LogWarning("Firebase chưa khởi tạo xong!");
+            onComplete?.Invoke(new List<LeaderboardPlayerData>());
+            return;
+        }
+
+        LeaderboardData.GetLeaderboard(onComplete);
+    }
+
 }

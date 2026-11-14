@@ -6,7 +6,7 @@ public abstract class SpecialLevelChallenge : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent<Dog>(out Dog dog))
         {
-            Destroy(dog.gameObject);
+            dog.gameObject.SetActive(false);
         }
 
         if (collision.gameObject.TryGetComponent<Bee>(out Bee bee))

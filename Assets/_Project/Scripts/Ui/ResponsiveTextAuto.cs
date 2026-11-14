@@ -6,8 +6,8 @@ public class ResponsiveTextAuto : MonoBehaviour
 {
     private const float REF_WIDTH = 1080f;
 
-    public float smallScale = 0.8f;
-    public float bigScale = 0.85f;
+    private float smallScale = 0.8f;
+   private  float bigScale = 0.85f;
 
     public enum RunTime
     {
