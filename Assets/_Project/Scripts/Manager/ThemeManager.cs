@@ -93,6 +93,7 @@ public class ThemeManager : Singleton<ThemeManager>
         ApplyDogTheme();
         ApplyBeeTheme();
         ApplyBeehiveTheme();
+        UploadDogTheme();
     }
 
     private bool InitializeGroup(
@@ -197,7 +198,8 @@ public class ThemeManager : Singleton<ThemeManager>
         }
 
         SaveData();
-
+        if (category == ThemeCategory.Dog)
+            UploadDogTheme();
         switch (category)
         {
             case ThemeCategory.Dog:
@@ -365,5 +367,13 @@ public class ThemeManager : Singleton<ThemeManager>
 
         if (beehiveTheme != null)
             beehiveTheme.SetTheme(0);
+    }
+
+    private void UploadDogTheme()
+    {
+        if (FirebaseManager.Instance == null)
+            return;
+
+        FirebaseManager.Instance.UploadDogTheme(data.SelectedDogTheme);
     }
 }

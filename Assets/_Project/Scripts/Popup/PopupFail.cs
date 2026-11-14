@@ -71,9 +71,10 @@ public class PopupFail : PopupBase
 
     public void SkipWithoutADS()
     {
-     
 
-        int unlockedLevel = LevelData.LoadLevel();
+
+        int currentLevel = LevelManager.Instance.CurrentLevel;
+
 
         blackOverlay.gameObject.SetActive(true);
 
@@ -87,7 +88,7 @@ public class PopupFail : PopupBase
             .SetUpdate(true)
             .OnComplete(() =>
             {
-                PopupManager.Instance.ShowPopupNextReplay(unlockedLevel);
+                PopupManager.Instance.ShowPopupNextReplay(currentLevel+1);
                 DestroyPopup();
             });
     }

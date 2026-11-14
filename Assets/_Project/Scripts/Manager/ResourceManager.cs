@@ -23,6 +23,9 @@ public class ResourceManager : Singleton<ResourceManager>
         NotifyResourceChanged();
 
         UploadLeaderboard();
+
+        AddResource(ResourceType.Coin, 10000);
+        AddResource(ResourceType.Gem, 10000);
     }
 
     public void AddResource(ResourceType type, int amount)
