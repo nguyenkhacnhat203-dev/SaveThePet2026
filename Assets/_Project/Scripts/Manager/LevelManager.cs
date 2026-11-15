@@ -1,5 +1,4 @@
 ﻿
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +9,10 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private Transform levelParent;
 
     public float checkingDuration = 5f;
-
     public LevelSetup currentLevelSetup;
 
     private float checkingTimer;
-    private bool wasChecking;
+    private bool isCheckingActive;
     private bool isFailing;
     private bool isCheckingFinished;
     private int lastDisplayedTime = -1;
@@ -25,30 +23,26 @@ public class LevelManager : Singleton<LevelManager>
     public LevelDifficulty CurrentDifficulty;
     public int CurrentBonusCoin;
 
-
     public bool IsFailing => isFailing;
-
-    private void Start()
-    {
- 
-    }
 
     private void Update()
     {
         bool isChecking = GameManager.Instance.IsChecking;
 
-        if (isChecking && !wasChecking)
+        if (isChecking && !isCheckingActive)
             StartChecking();
 
-        wasChecking = isChecking;
-
-        if (isChecking && !isFailing && !isCheckingFinished)
+        if (isCheckingActive &&
+            !GameManager.Instance.IsPause &&
+            !isFailing &&
+            !isCheckingFinished)
+        {
             UpdateChecking();
+        }
     }
 
     public void CreateLevel()
     {
-       
         StartCoroutine(CreateLevelCoroutine(LevelData.LoadLevel()));
     }
 
@@ -101,8 +95,6 @@ public class LevelManager : Singleton<LevelManager>
 
         UiManager.Instance.ResetLevelUI();
         UiManager.Instance.Level_Text.text = "Level " + CurrentLevel;
-
-
     }
 
     private void StopChecking()
@@ -114,7 +106,7 @@ public class LevelManager : Singleton<LevelManager>
         }
 
         checkingTimer = 0f;
-        wasChecking = false;
+        isCheckingActive = false;
         isFailing = false;
         isCheckingFinished = false;
         lastDisplayedTime = -1;
@@ -124,9 +116,10 @@ public class LevelManager : Singleton<LevelManager>
 
         GameManager.Instance.ChangeState(GameManager.GameState.Playing);
     }
+
     public void ResetLevel()
     {
-        Destroy(currentLevelSetup.gameObject); 
+        Destroy(currentLevelSetup.gameObject);
     }
 
     private void ResetLevelInfo()
@@ -136,7 +129,7 @@ public class LevelManager : Singleton<LevelManager>
         currentLevelSetup = null;
 
         checkingTimer = 0f;
-        wasChecking = false;
+        isCheckingActive = false;
         isFailing = false;
         isCheckingFinished = false;
         lastDisplayedTime = -1;
@@ -144,8 +137,10 @@ public class LevelManager : Singleton<LevelManager>
 
     private void StartChecking()
     {
+        isCheckingActive = true;
         isFailing = false;
         isCheckingFinished = false;
+
         checkingTimer = checkingDuration;
         lastDisplayedTime = -1;
 
@@ -214,7 +209,6 @@ public class LevelManager : Singleton<LevelManager>
         {
             GameManager.Instance.ChangeState(GameManager.GameState.Lose);
             StartCoroutine(ShowPopupFailDelay());
-
         });
     }
 
@@ -263,8 +257,6 @@ public class LevelManager : Singleton<LevelManager>
         StartWinSequence();
     }
 
-
-
     private void StartWinSequence()
     {
         UiManager.Instance.HideCheckingTime();
@@ -274,29 +266,27 @@ public class LevelManager : Singleton<LevelManager>
         {
             int earnedStars = UiManager.Instance.CurrentStarCount;
 
-            int bonusStars = LevelData.SaveLevelStars(CurrentLevel, earnedStars);
+            int bonusStars = LevelData.SaveLevelStars(
+                CurrentLevel,
+                earnedStars
+            );
 
             if (bonusStars > 0)
             {
-                ResourceManager.Instance.AddResource(ResourceType.Star, bonusStars);
+                ResourceManager.Instance.AddResource(
+                    ResourceType.Star,
+                    bonusStars
+                );
             }
 
             if (CurrentLevel == LevelData.LoadLevel())
             {
                 LevelData.SaveLevel(CurrentLevel + 1);
-
             }
-
-
-            //Debug.Log(
-            //    $"[LevelManager] WIN LEVEL {CurrentLevel} | " +
-            //    $"Earned Stars: {earnedStars}"
-            //);
 
             StartCoroutine(ShowPopupWinDelay());
         });
     }
-
 
     private IEnumerator ShowPopupWinDelay()
     {
@@ -304,6 +294,7 @@ public class LevelManager : Singleton<LevelManager>
 
         PopupManager.Instance.ShowPopupWin();
     }
+
     private IEnumerator ShowPopupFailDelay()
     {
         yield return new WaitForSeconds(1f);

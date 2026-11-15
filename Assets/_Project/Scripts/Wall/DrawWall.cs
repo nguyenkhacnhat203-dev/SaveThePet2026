@@ -193,6 +193,9 @@ public class DrawWall : MonoBehaviour
 
     public void CancelDrawing()
     {
+        if (hasDrawn)
+            return;
+
         isDrawing = false;
         isWaitingForValidPosition = false;
         currentLength = 0f;
@@ -202,7 +205,6 @@ public class DrawWall : MonoBehaviour
         if (lineRenderer != null)
             lineRenderer.positionCount = 0;
     }
-
     private void UpdateLine()
     {
         lineRenderer.positionCount = points.Count;

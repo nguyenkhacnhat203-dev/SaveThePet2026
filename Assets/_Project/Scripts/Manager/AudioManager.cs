@@ -31,6 +31,7 @@ public class AudioManager : Singleton<AudioManager>
     private Dictionary<string, AudioData> soundDictionary;
 
     private string currentMusic;
+    private bool isMusicPaused;
 
     protected override void Awake()
     {
@@ -39,11 +40,11 @@ public class AudioManager : Singleton<AudioManager>
         InitializeDictionary();
     }
 
-
     private void Start()
     {
         PlayMusic("BgMusic");
     }
+
     private void InitializeDictionary()
     {
         musicDictionary = new Dictionary<string, AudioData>();
@@ -53,11 +54,14 @@ public class AudioManager : Singleton<AudioManager>
         AddToDictionary(soundList, soundDictionary);
     }
 
-    private void AddToDictionary(List<AudioData> list, Dictionary<string, AudioData> dictionary)
+    private void AddToDictionary(
+        List<AudioData> list,
+        Dictionary<string, AudioData> dictionary)
     {
         foreach (AudioData audio in list)
         {
-            if (audio == null || audio.clip == null || string.IsNullOrEmpty(audio.audioName))
+            if (audio == null || audio.clip == null ||
+                string.IsNullOrEmpty(audio.audioName))
                 continue;
 
             if (!dictionary.ContainsKey(audio.audioName))
@@ -67,10 +71,8 @@ public class AudioManager : Singleton<AudioManager>
 
     public void PlayMusic(string audioName)
     {
-        if (!DataMusic.MusicEnabled || musicSource == null)
-            return;
-
-        if (!musicDictionary.TryGetValue(audioName, out AudioData audio))
+        if (musicDictionary == null ||
+            !musicDictionary.TryGetValue(audioName, out AudioData audio))
         {
             Debug.LogWarning("Music not found: " + audioName);
             return;
@@ -78,12 +80,29 @@ public class AudioManager : Singleton<AudioManager>
 
         currentMusic = audioName;
 
-        if (musicSource.clip == audio.clip && musicSource.isPlaying)
+        if (musicSource == null || !DataMusic.MusicEnabled)
             return;
+
+        if (musicSource.clip == audio.clip)
+        {
+            if (isMusicPaused)
+                return;
+
+            if (!musicSource.isPlaying)
+                musicSource.Play();
+
+            return;
+        }
+
+        musicSource.Stop();
 
         musicSource.clip = audio.clip;
         musicSource.volume = audio.volume;
         musicSource.loop = audio.loop;
+
+        isMusicPaused = false;
+
+        musicSource.time = 0f;
         musicSource.Play();
     }
 
@@ -92,7 +111,8 @@ public class AudioManager : Singleton<AudioManager>
         if (!DataMusic.SoundEnabled || soundSource == null)
             return;
 
-        if (!soundDictionary.TryGetValue(audioName, out AudioData audio))
+        if (soundDictionary == null ||
+            !soundDictionary.TryGetValue(audioName, out AudioData audio))
         {
             Debug.LogWarning("Sound not found: " + audioName);
             return;
@@ -113,8 +133,11 @@ public class AudioManager : Singleton<AudioManager>
 
     public void StopMusic()
     {
-        if (musicSource != null)
-            musicSource.Stop();
+        if (musicSource == null)
+            return;
+
+        isMusicPaused = true;
+        musicSource.Pause();
     }
 
     public void StopSound()
@@ -127,9 +150,26 @@ public class AudioManager : Singleton<AudioManager>
     {
         DataMusic.MusicEnabled = enabled;
 
+        if (musicSource == null)
+            return;
+
         if (!enabled)
         {
             StopMusic();
+            return;
+        }
+
+        if (musicSource.clip != null)
+        {
+            if (isMusicPaused)
+            {
+                isMusicPaused = false;
+                musicSource.UnPause();
+            }
+            else if (!musicSource.isPlaying)
+            {
+                musicSource.Play();
+            }
         }
         else if (!string.IsNullOrEmpty(currentMusic))
         {
@@ -147,18 +187,20 @@ public class AudioManager : Singleton<AudioManager>
 
     public void SetMusicVolume(string audioName, float volume)
     {
-        if (!musicDictionary.TryGetValue(audioName, out AudioData audio))
+        if (musicDictionary == null ||
+            !musicDictionary.TryGetValue(audioName, out AudioData audio))
             return;
 
         audio.volume = Mathf.Clamp01(volume);
 
-        if (musicSource.clip == audio.clip)
+        if (musicSource != null && musicSource.clip == audio.clip)
             musicSource.volume = audio.volume;
     }
 
     public void SetSoundVolume(string audioName, float volume)
     {
-        if (!soundDictionary.TryGetValue(audioName, out AudioData audio))
+        if (soundDictionary == null ||
+            !soundDictionary.TryGetValue(audioName, out AudioData audio))
             return;
 
         audio.volume = Mathf.Clamp01(volume);
