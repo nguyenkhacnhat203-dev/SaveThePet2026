@@ -1,5 +1,6 @@
 
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,8 @@ public class PopupProfile : PopupBase
 
     private Coroutine messageCoroutine;
     private bool isSaving;
-
+    [SerializeField] private Image avatar;
+    [SerializeField] private List<Sprite> avatarThemes;
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -41,7 +43,7 @@ public class PopupProfile : PopupBase
     protected override void Start()
     {
         base.Start();
-
+        UpdateAvatar();
         if (buttonSave != null)
             buttonSave.onClick.AddListener(SavePlayerName);
     }
@@ -58,6 +60,19 @@ public class PopupProfile : PopupBase
             StopCoroutine(messageCoroutine);
             messageCoroutine = null;
         }
+    }
+
+    private void UpdateAvatar()
+    {
+        if (avatar == null || ThemeManager.Instance == null)
+            return;
+
+        int index = ThemeManager.Instance.GetSelectedTheme(ThemeCategory.Dog);
+
+        if (index < 0 || index >= avatarThemes.Count)
+            return;
+
+        avatar.sprite = avatarThemes[index];
     }
 
     private void SavePlayerName()

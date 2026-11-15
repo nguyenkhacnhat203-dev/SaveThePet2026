@@ -1180,8 +1180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe03f77b04703f749bb5a21c4ad8261d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smallScale: 0.9
-  bigScale: 0.9
   runTime: 1
 --- !u!114 &3430170556583254638
 MonoBehaviour:
@@ -1199,6 +1197,13 @@ MonoBehaviour:
   inputName: {fileID: 7786750715420753493}
   buttonSave: {fileID: 4726248586913434365}
   messageText: {fileID: 2202415390952774401}
+  avatar: {fileID: 9042939534847617798}
+  avatarThemes:
+  - {fileID: 21300000, guid: 0e717df1f6071c14bad5db598b58526c, type: 3}
+  - {fileID: 21300000, guid: 46503e011e631ef418d85b84bd2a2a41, type: 3}
+  - {fileID: 21300000, guid: 4364149440edf114eaa6a2e18e20b270, type: 3}
+  - {fileID: 21300000, guid: 017a213daf0ea5f4781fc89e39fda869, type: 3}
+  - {fileID: 21300000, guid: adee9eaf76ff07d41bc81a366eec67bf, type: 3}
 --- !u!1 &8266829101817524354
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,6 +20,7 @@ public class DrawWall : MonoBehaviour
     private bool isWaitingForValidPosition;
     private float currentLength;
     private bool hasDrawn;
+
     private void Awake()
     {
         mainCamera = Camera.main;
@@ -137,6 +138,7 @@ public class DrawWall : MonoBehaviour
 
         points.Add(worldPosition);
         currentLength += distance;
+
         UpdateLine();
 
         UiManager.Instance.UpdateHealthBar(
@@ -144,14 +146,12 @@ public class DrawWall : MonoBehaviour
             maxLength
         );
     }
+
     private bool IsBlockedByCollider(Vector2 worldPosition)
     {
         Collider2D hit = Physics2D.OverlapPoint(worldPosition);
 
-        if (hit != null)
-            return true;
-
-        return false;
+        return hit != null;
     }
 
     private bool IsPathBlocked(Vector2 startPoint, Vector2 endPoint)
@@ -190,6 +190,19 @@ public class DrawWall : MonoBehaviour
             SetupWallPhysics();
         }
     }
+
+    public void CancelDrawing()
+    {
+        isDrawing = false;
+        isWaitingForValidPosition = false;
+        currentLength = 0f;
+
+        points.Clear();
+
+        if (lineRenderer != null)
+            lineRenderer.positionCount = 0;
+    }
+
     private void UpdateLine()
     {
         lineRenderer.positionCount = points.Count;
@@ -272,7 +285,6 @@ public class DrawWall : MonoBehaviour
                 wall.transform.InverseTransformPoint(current);
 
             leftSide.Add(localPoint + normal * halfWidth);
-
             rightSide.Add(localPoint - normal * halfWidth);
         }
 

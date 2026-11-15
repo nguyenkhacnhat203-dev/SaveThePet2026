@@ -1,16 +1,15 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 public class GamePlayManager : Singleton<GamePlayManager>
 {
     [SerializeField] private DrawWall drawWall;
     [SerializeField] private BeeSpawn[] beeSpawners;
 
+    private bool isInputLocked;
+
     private void Start()
     {
-        //GameManager.Instance.ChangeState(
-        //    GameManager.GameState.Playing
-        //);
-
         if (beeSpawners == null || beeSpawners.Length == 0)
         {
             beeSpawners = FindObjectsOfType<BeeSpawn>();
@@ -19,13 +18,39 @@ public class GamePlayManager : Singleton<GamePlayManager>
 
     private void Update()
     {
-        if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)
+        if (GameManager.Instance.IsPause ||
+            GameManager.Instance.IsWin ||
+            GameManager.Instance.IsLose ||
+            Time.timeScale == 0f)
+        {
+            LockDrawInput();
             return;
+        }
+
+        if (isInputLocked)
+        {
+            if (!Input.GetMouseButton(0))
+            {
+                isInputLocked = false;
+            }
+
+            return;
+        }
 
         if (GameManager.Instance.IsPlaying)
         {
             UpdateDrawWall();
         }
+    }
+
+    private void LockDrawInput()
+    {
+        if (!isInputLocked)
+        {
+            drawWall.CancelDrawing();
+        }
+
+        isInputLocked = true;
     }
 
     private void FixedUpdate()
@@ -40,7 +65,8 @@ public class GamePlayManager : Singleton<GamePlayManager>
         if (GameManager.Instance.IsPause)
             return;
 
-        if (GameManager.Instance.IsPlaying || GameManager.Instance.IsChecking)
+        if (GameManager.Instance.IsPlaying ||
+            GameManager.Instance.IsChecking)
         {
             foreach (var spawner in beeSpawners)
             {
@@ -55,16 +81,13 @@ public class GamePlayManager : Singleton<GamePlayManager>
     {
         if (Input.GetMouseButtonDown(0))
         {
-            drawWall.StartDrawing(
-                Input.mousePosition
-            );
+            drawWall.StartDrawing(Input.mousePosition);
+            return;
         }
 
         if (Input.GetMouseButton(0))
         {
-            drawWall.Draw(
-                Input.mousePosition
-            );
+            drawWall.Draw(Input.mousePosition);
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -84,8 +107,4 @@ public class GamePlayManager : Singleton<GamePlayManager>
             spawner.StartSpawn();
         }
     }
-
-
-
-
 }

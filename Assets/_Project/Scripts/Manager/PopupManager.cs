@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class PopupManager : Singleton<PopupManager>
@@ -12,6 +11,7 @@ public class PopupManager : Singleton<PopupManager>
     [SerializeField] private PopupListLevel popupListLevelPrefab;
     [SerializeField] private PopupProfile popupProfilePrefab;
     [SerializeField] private PopupRanking popupRankingPrefab;
+    [SerializeField] private PopupSetiings popupSettingsPrefab;
 
     [Header("Popup Parent")]
     [SerializeField] private Transform popupParent;
@@ -23,6 +23,7 @@ public class PopupManager : Singleton<PopupManager>
     private PopupListLevel popupListLevel;
     private PopupProfile popupProfile;
     private PopupRanking popupRanking;
+    private PopupSetiings popupSettings;
 
     public void ShowPopupWin()
     {
@@ -100,5 +101,13 @@ public class PopupManager : Singleton<PopupManager>
             popupRanking = Instantiate(popupRankingPrefab, popupParent);
 
         popupRanking.gameObject.SetActive(true);
+    }
+
+    public void ShowPopupSettings()
+    {
+        if (popupSettings == null)
+            popupSettings = Instantiate(popupSettingsPrefab, popupParent);
+
+        popupSettings.gameObject.SetActive(true);
     }
 }

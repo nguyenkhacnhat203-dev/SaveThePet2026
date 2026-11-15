@@ -36,7 +36,6 @@ public class FirebaseLeaderboardData
     {
         if (string.IsNullOrEmpty(playerID))
         {
-            Debug.LogError("Player ID is empty!");
             onComplete?.Invoke(null);
             return;
         }
@@ -76,7 +75,6 @@ public class FirebaseLeaderboardData
         {
             if (task.IsFaulted || task.IsCanceled)
             {
-                Debug.LogError("Assign player name failed: " + task.Exception);
                 onComplete?.Invoke(null);
                 return;
             }
@@ -85,7 +83,6 @@ public class FirebaseLeaderboardData
 
             string playerName = snapshot.Child(playerID).Value?.ToString();
 
-            Debug.Log("Player name: " + playerName);
 
             onComplete?.Invoke(playerName);
         });
@@ -115,11 +112,9 @@ public class FirebaseLeaderboardData
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
-                    Debug.LogError("Upload leaderboard failed: " + task.Exception);
                     return;
                 }
 
-                Debug.Log("Upload leaderboard successfully!");
             });
     }
 
@@ -163,7 +158,6 @@ public class FirebaseLeaderboardData
         {
             if (task.IsFaulted || task.IsCanceled)
             {
-                Debug.LogError("Change player name failed: " + task.Exception);
                 onComplete?.Invoke(false);
                 return;
             }
@@ -194,11 +188,9 @@ public class FirebaseLeaderboardData
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
-                    Debug.LogError("Upload Dog Theme failed: " + task.Exception);
                     return;
                 }
 
-                Debug.Log("Upload Dog Theme successfully: " + themeIndex);
             });
     }
 
@@ -214,7 +206,6 @@ public class FirebaseLeaderboardData
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
-                    Debug.LogError("Get leaderboard failed: " + task.Exception);
                     onComplete?.Invoke(new List<LeaderboardPlayerData>());
                     return;
                 }
@@ -228,7 +219,6 @@ public class FirebaseLeaderboardData
                     {
                         if (themeTask.IsFaulted || themeTask.IsCanceled)
                         {
-                            Debug.LogError("Get player themes failed: " + themeTask.Exception);
                             onComplete?.Invoke(new List<LeaderboardPlayerData>());
                             return;
                         }
