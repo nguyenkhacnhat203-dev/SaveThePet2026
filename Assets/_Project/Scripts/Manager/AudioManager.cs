@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,17 +27,25 @@ public class AudioManager : Singleton<AudioManager>
     [Header("Sound List")]
     [SerializeField] private List<AudioData> soundList = new List<AudioData>();
 
+    [Header("Sound Settings")]
+    [SerializeField] private int maxSoundSources = 10;
+
     private Dictionary<string, AudioData> musicDictionary;
     private Dictionary<string, AudioData> soundDictionary;
 
+    private List<AudioSource> soundSources = new List<AudioSource>();
+    private List<AudioSource> pausedSources = new List<AudioSource>();
+
     private string currentMusic;
     private bool isMusicPaused;
+    private bool isSoundPaused;
 
     protected override void Awake()
     {
         base.Awake();
 
         InitializeDictionary();
+        InitializeSoundSources();
     }
 
     private void Start()
@@ -69,6 +77,27 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
+    private void InitializeSoundSources()
+    {
+        soundSources.Clear();
+
+        if (soundSource == null)
+            return;
+
+        soundSources.Add(soundSource);
+
+        for (int i = 1; i < maxSoundSources; i++)
+        {
+            GameObject obj = new GameObject("SoundSource_" + i);
+            obj.transform.SetParent(transform);
+
+            AudioSource source = obj.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+
+            soundSources.Add(source);
+        }
+    }
+
     public void PlayMusic(string audioName)
     {
         if (musicDictionary == null ||
@@ -95,7 +124,6 @@ public class AudioManager : Singleton<AudioManager>
         }
 
         musicSource.Stop();
-
         musicSource.clip = audio.clip;
         musicSource.volume = audio.volume;
         musicSource.loop = audio.loop;
@@ -108,7 +136,7 @@ public class AudioManager : Singleton<AudioManager>
 
     public void PlaySound(string audioName)
     {
-        if (!DataMusic.SoundEnabled || soundSource == null)
+        if (!DataMusic.SoundEnabled)
             return;
 
         if (soundDictionary == null ||
@@ -118,32 +146,78 @@ public class AudioManager : Singleton<AudioManager>
             return;
         }
 
-        if (audio.loop)
+        AudioSource source = GetAvailableSoundSource();
+
+        if (source == null)
+            return;
+
+        source.Stop();
+        source.clip = audio.clip;
+        source.volume = audio.volume;
+        source.loop = audio.loop;
+        source.Play();
+    }
+
+    private AudioSource GetAvailableSoundSource()
+    {
+        foreach (AudioSource source in soundSources)
         {
-            soundSource.clip = audio.clip;
-            soundSource.volume = audio.volume;
-            soundSource.loop = true;
-            soundSource.Play();
+            if (source == null)
+                continue;
+
+            if (pausedSources.Contains(source))
+                continue;
+
+            if (!source.isPlaying)
+                return source;
         }
-        else
+
+        return null;
+    }
+
+    public void PauseAllSound()
+    {
+        isSoundPaused = true;
+        pausedSources.Clear();
+
+        foreach (AudioSource source in soundSources)
         {
-            soundSource.PlayOneShot(audio.clip, audio.volume);
+            if (source != null && source.isPlaying)
+            {
+                source.Pause();
+                pausedSources.Add(source);
+            }
         }
     }
 
-    public void StopMusic()
+    public void ResumeAllSound()
     {
-        if (musicSource == null)
-            return;
+        isSoundPaused = false;
 
-        isMusicPaused = true;
-        musicSource.Pause();
+        foreach (AudioSource source in pausedSources)
+        {
+            if (source != null)
+                source.UnPause();
+        }
+
+        pausedSources.Clear();
+    }
+
+    public void StopAllSound()
+    {
+        foreach (AudioSource source in soundSources)
+        {
+            if (source != null)
+                source.Stop();
+        }
+
+        pausedSources.Clear();
+        isSoundPaused = false;
     }
 
     public void StopSound()
     {
-        if (soundSource != null)
-            soundSource.Stop();
+        StopAllSound();
     }
 
     public void SetMusicEnabled(bool enabled)
@@ -177,12 +251,21 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
+    public void StopMusic()
+    {
+        if (musicSource == null)
+            return;
+
+        isMusicPaused = true;
+        musicSource.Pause();
+    }
+
     public void SetSoundEnabled(bool enabled)
     {
         DataMusic.SoundEnabled = enabled;
 
         if (!enabled)
-            StopSound();
+            StopAllSound();
     }
 
     public void SetMusicVolume(string audioName, float volume)
@@ -204,6 +287,12 @@ public class AudioManager : Singleton<AudioManager>
             return;
 
         audio.volume = Mathf.Clamp01(volume);
+
+        foreach (AudioSource source in soundSources)
+        {
+            if (source != null && source.clip == audio.clip)
+                source.volume = audio.volume;
+        }
     }
 
     public void PlayHaptic()

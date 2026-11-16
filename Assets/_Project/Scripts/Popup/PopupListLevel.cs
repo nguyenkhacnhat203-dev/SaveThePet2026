@@ -84,6 +84,7 @@ public class PopupListLevel : PopupBase
 
             spawnedLevels.Insert(0, baseLevel);
         }
+
     }
 
     private void OnClickLevel(int level)
@@ -98,6 +99,7 @@ public class PopupListLevel : PopupBase
             return;
 
         isTransitioning = true;
+        AudioManager.Instance.PlaySound("TapButton");
 
         blackOverlay.gameObject.SetActive(true);
 
@@ -112,7 +114,9 @@ public class PopupListLevel : PopupBase
             .OnComplete(() =>
             {
                 PopupManager.Instance.ShowPopupNextReplay(level);
-                DestroyPopup();
+
+                Destroy(gameObject);
+
             });
     }
 
@@ -132,6 +136,8 @@ public class PopupListLevel : PopupBase
 
     public override void DestroyPopup()
     {
+        AudioManager.Instance.PlaySound("TapButton");
+
         Destroy(gameObject);
     }
 

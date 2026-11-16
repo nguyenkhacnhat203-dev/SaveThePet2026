@@ -646,6 +646,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: f42b49841f38df94e82b944957148fe8, type: 3}
     volume: 1
     loop: 0
+  - audioName: TapButton
+    clip: {fileID: 8300000, guid: cfaed68a19cf88a4baa6763f8b9b3577, type: 3}
+    volume: 1
+    loop: 0
 --- !u!4 &386647081
 Transform:
   m_ObjectHideFlags: 0

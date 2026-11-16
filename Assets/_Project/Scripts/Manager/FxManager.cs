@@ -24,10 +24,10 @@ public class FxManager : Singleton<FxManager>
     public RectTransform CoinTarget => BarCoin;
     public RectTransform GemTarget => BarGem;
 
-    public void PlayFireworks(Transform LeftPoint, Transform RightPoint)
+    public void PlayFireworks(Transform LeftPoint, Transform RightPoint , Transform Po)
     {
-        Instantiate(FireworkLeft, LeftPoint.position, Quaternion.identity, transform);
-        Instantiate(FireworkRight, RightPoint.position, Quaternion.identity, transform);
+        Instantiate(FireworkLeft, LeftPoint.position, Quaternion.identity, Po);
+        Instantiate(FireworkRight, RightPoint.position, Quaternion.identity, Po);
     }
 
     public void PlayCoin(

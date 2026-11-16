@@ -158,7 +158,8 @@ public class PopupWin : PopupBase
 
         FxManager.Instance.PlayFireworks(
             CreatePoint(leftWorldPosition),
-            CreatePoint(rightWorldPosition)
+            CreatePoint(rightWorldPosition),
+            transform
         );
     }
 

@@ -29,7 +29,6 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (popupWin == null)
             popupWin = Instantiate(popupWinPrefab, popupParent);
-
         popupWin.gameObject.SetActive(true);
     }
 
@@ -45,18 +44,26 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)
             return;
+
+
+        AudioManager.Instance.StopAllSound();
+        AudioManager.Instance.PlaySound("TapButton");
+
         PopupNext popup = Instantiate(popupNextPrefab, popupParent);
         popup.SetPopupType(PopupNext.PopupType.Home);
     }
 
     public void ShowPopupNextGame()
     {
+        //AudioManager.Instance.PlaySound("TapButton");
+
         PopupNext popup = Instantiate(popupNextPrefab, popupParent);
         popup.SetPopupType(PopupNext.PopupType.Game);
     }
 
     public void ShowPopupNextReplay(int level)
     {
+
         PopupNext popup = Instantiate(popupNextPrefab, popupParent);
         popup.SetReplayLevel(level);
     }
@@ -65,6 +72,7 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (popupTheme == null)
             popupTheme = Instantiate(popupThemePrefab, popupParent);
+        AudioManager.Instance.PlaySound("TapButton");
 
         popupTheme.gameObject.SetActive(true);
     }
@@ -73,18 +81,23 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (popupListLevel == null)
             popupListLevel = Instantiate(popupListLevelPrefab, popupParent);
+        AudioManager.Instance.PlaySound("TapButton");
 
         popupListLevel.gameObject.SetActive(true);
     }
 
     public void ShowPopupAddCoin()
     {
+        AudioManager.Instance.PlaySound("TapButton");
+
         PopupAdd popup = Instantiate(popupAddPrefab, popupParent);
         popup.SetPopupType(PopupAdd.AddType.Coin);
     }
 
     public void ShowPopupAddGem()
     {
+        AudioManager.Instance.PlaySound("TapButton");
+
         PopupAdd popup = Instantiate(popupAddPrefab, popupParent);
         popup.SetPopupType(PopupAdd.AddType.Gem);
     }
@@ -93,6 +106,7 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (popupProfile == null)
             popupProfile = Instantiate(popupProfilePrefab, popupParent);
+        AudioManager.Instance.PlaySound("TapButton");
 
         popupProfile.gameObject.SetActive(true);
     }
@@ -101,6 +115,7 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (popupRanking == null)
             popupRanking = Instantiate(popupRankingPrefab, popupParent);
+        AudioManager.Instance.PlaySound("TapButton");
 
         popupRanking.gameObject.SetActive(true);
     }
@@ -109,6 +124,7 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (popupSettings == null)
             popupSettings = Instantiate(popupSettingsPrefab, popupParent);
+
 
         popupSettings.gameObject.SetActive(true);
     }
