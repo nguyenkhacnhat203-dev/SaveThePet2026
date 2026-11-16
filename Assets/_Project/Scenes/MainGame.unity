@@ -635,7 +635,7 @@ MonoBehaviour:
     volume: 1
     loop: 0
   - audioName: Tick
-    clip: {fileID: 8300000, guid: bfa05cb80493da44ba6e0c573badad0f, type: 3}
+    clip: {fileID: 8300000, guid: cc96348a44b89754f923cc26163e15e6, type: 3}
     volume: 1
     loop: 0
   - audioName: Clock
@@ -648,8 +648,17 @@ MonoBehaviour:
     loop: 0
   - audioName: TapButton
     clip: {fileID: 8300000, guid: cfaed68a19cf88a4baa6763f8b9b3577, type: 3}
+    volume: 0.8
+    loop: 0
+  - audioName: Fail
+    clip: {fileID: 8300000, guid: 95fc315b492c1944da1ccec5ccee455a, type: 3}
     volume: 1
     loop: 0
+  - audioName: X
+    clip: {fileID: 8300000, guid: c1808a15d8bfef24892e3ef02c4e3098, type: 3}
+    volume: 1
+    loop: 0
+  maxSoundSources: 10
 --- !u!4 &386647081
 Transform:
   m_ObjectHideFlags: 0

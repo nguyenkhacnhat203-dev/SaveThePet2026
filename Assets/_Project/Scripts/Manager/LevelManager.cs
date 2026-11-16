@@ -205,7 +205,8 @@ public class LevelManager : Singleton<LevelManager>
         isFailing = true;
 
         UiManager.Instance.HideCheckingTime();
-
+        AudioManager.Instance.StopAllSound();
+        AudioManager.Instance.PlaySound("X");
         UiManager.Instance.PlayLoseXAnimation(() =>
         {
             GameManager.Instance.ChangeState(GameManager.GameState.Lose);
@@ -300,6 +301,7 @@ public class LevelManager : Singleton<LevelManager>
     private IEnumerator ShowPopupFailDelay()
     {
         yield return new WaitForSeconds(1f);
+        AudioManager.Instance.PlaySound("Fail");
 
         PopupManager.Instance.ShowPopupFail();
     }

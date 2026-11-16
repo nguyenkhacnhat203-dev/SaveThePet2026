@@ -67,6 +67,8 @@ public class UiManager : Singleton<UiManager>
     {
         if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)
             return;
+        AudioManager.Instance.StopAllSound();
+
         AudioManager.Instance.PlaySound("TapButton");
 
         int currentLevel = LevelManager.Instance.CurrentLevel;
