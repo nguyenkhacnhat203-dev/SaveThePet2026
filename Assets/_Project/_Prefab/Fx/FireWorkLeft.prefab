@@ -4843,12 +4843,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 45
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 30
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -9737,12 +9737,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 70
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 55
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -14591,12 +14591,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 60
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 45
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -19445,12 +19445,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 65
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 50
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -24299,12 +24299,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 75
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 60
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -29153,12 +29153,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 50
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 35
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -34007,12 +34007,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 40
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 25
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -38861,12 +38861,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 35
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 20
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5
@@ -43715,12 +43715,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1c795d5cbb68940aa819e328809504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 55
-  spreadAngle: 30
-  minForce: 20
-  maxForce: 24
-  particleCount: 10
-  lifeTime: 3
+  angle: 40
+  spreadAngle: 25
+  minForce: 15
+  maxForce: 22
+  particleCount: 15
+  lifeTime: 4
   size: 0.25
   gravity: 9.8
   destroyAfter: 3.5

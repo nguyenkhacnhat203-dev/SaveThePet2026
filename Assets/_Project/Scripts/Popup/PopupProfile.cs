@@ -43,9 +43,12 @@ public class PopupProfile : PopupBase
     protected override void Start()
     {
         base.Start();
+        GameManager.Instance.ChangeState(GameManager.GameState.Pause);
+
         UpdateAvatar();
         if (buttonSave != null)
             buttonSave.onClick.AddListener(SavePlayerName);
+
     }
 
     protected override void OnDisable()
@@ -60,6 +63,9 @@ public class PopupProfile : PopupBase
             StopCoroutine(messageCoroutine);
             messageCoroutine = null;
         }
+
+        GameManager.Instance.ChangeState(GameManager.GameState.Playing);
+
     }
 
     private void UpdateAvatar()

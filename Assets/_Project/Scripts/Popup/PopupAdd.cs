@@ -83,17 +83,27 @@ public class PopupAdd : PopupBase
         switch (addType)
         {
             case AddType.Coin:
-                ResourceManager.Instance.AddResource(
-                    ResourceType.Coin, addCoinAmount);
+                FxManager.Instance.PlayCoin(
+       transform.position,
+       FxManager.Instance.CoinTarget,
+       UiManager.Instance.Coin.gameObject,
+       10,
+       addCoinAmount
+   );
                 break;
 
             case AddType.Gem:
-                ResourceManager.Instance.AddResource(
-                    ResourceType.Gem, addGemAmount);
+                FxManager.Instance.PlayGem(
+         transform.position,
+         FxManager.Instance.GemTarget,
+         UiManager.Instance.Gem.gameObject,
+         10,
+         addGemAmount
+     );
                 break;
         }
-
         DestroyPopup();
+
     }
     public override void DestroyPopup()
     {

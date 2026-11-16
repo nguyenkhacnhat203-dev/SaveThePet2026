@@ -101,7 +101,7 @@ public class GamePlayManager : Singleton<GamePlayManager>
         GameManager.Instance.ChangeState(
             GameManager.GameState.Checking
         );
-
+        AudioManager.Instance.PlaySound("Bee");
         foreach (var spawner in beeSpawners)
         {
             spawner.StartSpawn();

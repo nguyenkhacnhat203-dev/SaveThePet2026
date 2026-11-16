@@ -137,6 +137,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private void StartChecking()
     {
+        AudioManager.Instance.PlaySound("Clock");
         isCheckingActive = true;
         isFailing = false;
         isCheckingFinished = false;
@@ -261,6 +262,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         UiManager.Instance.HideCheckingTime();
         GameManager.Instance.ChangeState(GameManager.GameState.Win);
+        AudioManager.Instance.PlaySound("Tick");
 
         UiManager.Instance.PlayWinCheckmarkAnimation(() =>
         {

@@ -59,6 +59,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
                     IsInitialized = true;
 
                     Debug.Log("<color=green>Firebase connected successfully!</color>");
+                    FirebaseAnalyticManager.Instance?.UploadScore();
 
                     InitializePlayerName();
                 }

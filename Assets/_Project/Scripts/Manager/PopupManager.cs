@@ -43,6 +43,8 @@ public class PopupManager : Singleton<PopupManager>
 
     public void ShowPopupNextHome()
     {
+        if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)
+            return;
         PopupNext popup = Instantiate(popupNextPrefab, popupParent);
         popup.SetPopupType(PopupNext.PopupType.Home);
     }

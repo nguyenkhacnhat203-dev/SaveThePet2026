@@ -31,8 +31,8 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private Image blackOverlay;
 
 
-    [SerializeField] private TMP_Text Coin;
-    [SerializeField] private TMP_Text Gem;
+    public TMP_Text Coin;
+    public TMP_Text Gem;
 
     private void Start()
     {

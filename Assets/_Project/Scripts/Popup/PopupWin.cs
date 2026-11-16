@@ -21,6 +21,10 @@ public class PopupWin : PopupBase
     [SerializeField] private float starMoveDuration = 0.4f;
     [SerializeField] private float cellScaleDuration = 0.1f;
 
+    [Header("Audio & Effect Delay")]
+    [SerializeField] private float fireworksDelay = 0.5f;
+    [SerializeField] private float starDelay = 0.5f;
+
     [Header("Fireworks")]
     [SerializeField] private RectTransform leftTrumpet;
     [SerializeField] private RectTransform rightTrumpet;
@@ -30,7 +34,9 @@ public class PopupWin : PopupBase
     [SerializeField] private float fadeDuration = 0.25f;
 
     private int bonusCoin;
+
     private Sequence starSequence;
+    private Sequence winSequence;
 
     protected override void Start()
     {
@@ -39,8 +45,32 @@ public class PopupWin : PopupBase
         if (bonusCoinText != null)
             bonusCoinText.text = "+" + bonusCoin.ToString();
 
-        PlayStarAnimation();
-        PlayWinFireworks();
+        PlayWinSequence();
+    }
+
+    private void PlayWinSequence()
+    {
+        winSequence = DOTween.Sequence()
+            .SetUpdate(true);
+
+        winSequence.AppendCallback(() =>
+        {
+            AudioManager.Instance.PlaySound("Win");
+        });
+
+        winSequence.AppendInterval(fireworksDelay);
+
+        winSequence.AppendCallback(() =>
+        {
+            PlayWinFireworks();
+        });
+
+        winSequence.AppendInterval(starDelay);
+
+        winSequence.AppendCallback(() =>
+        {
+            PlayStarAnimation();
+        });
     }
 
     private void PlayStarAnimation()
@@ -65,7 +95,15 @@ public class PopupWin : PopupBase
             cellStar3
         };
 
-        starSequence = DOTween.Sequence();
+        string[] soundNames =
+        {
+            "PopPrize1",
+            "PopPrize2",
+            "PopPrize3"
+        };
+
+        starSequence = DOTween.Sequence()
+            .SetUpdate(true);
 
         for (int i = 0; i < starCount; i++)
         {
@@ -78,12 +116,19 @@ public class PopupWin : PopupBase
             Vector3 targetPosition = currentCell.position;
             Vector3 originalScale = currentCell.localScale;
 
+            string soundName = soundNames[i];
+
             starSequence.Append(
                 currentStar.DOMove(
                     targetPosition,
                     starMoveDuration
                 ).SetEase(Ease.OutQuad)
             );
+
+            starSequence.AppendCallback(() =>
+            {
+                AudioManager.Instance.PlaySound(soundName);
+            });
 
             starSequence.Append(
                 currentCell.DOScale(
@@ -108,6 +153,8 @@ public class PopupWin : PopupBase
 
         Vector3 leftWorldPosition = GetWorldPosition(leftTrumpet);
         Vector3 rightWorldPosition = GetWorldPosition(rightTrumpet);
+
+        AudioManager.Instance.PlaySound("Firework");
 
         FxManager.Instance.PlayFireworks(
             CreatePoint(leftWorldPosition),
@@ -154,7 +201,10 @@ public class PopupWin : PopupBase
             LevelManager.Instance.CurrentDifficulty
         );
 
-        ResourceManager.Instance.AddResource(ResourceType.Coin, bonusCoin);
+        ResourceManager.Instance.AddResource(
+            ResourceType.Coin,
+            bonusCoin
+        );
 
         NextLevel();
     }
@@ -183,7 +233,10 @@ public class PopupWin : PopupBase
 
         int reward = bonusCoin * 2;
 
-        ResourceManager.Instance.AddResource(ResourceType.Coin, reward);
+        ResourceManager.Instance.AddResource(
+            ResourceType.Coin,
+            reward
+        );
 
         NextLevel();
     }
@@ -225,8 +278,13 @@ public class PopupWin : PopupBase
 
     private void OnDestroy()
     {
+        if (winSequence != null)
+            winSequence.Kill();
+
         if (starSequence != null)
             starSequence.Kill();
+
+        DOTween.Kill(this);
 
         if (blackOverlay != null)
             DOTween.Kill(blackOverlay);
