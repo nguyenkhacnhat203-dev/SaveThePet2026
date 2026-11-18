@@ -52,6 +52,8 @@ public class PopupRanking : PopupBase
             return;
         }
 
+        string currentPlayerID = FirebaseManager.Instance.FirebaseID.DeviceID;
+
         if (players != null && players.Count > 0)
         {
             for (int i = players.Count - 1; i >= 0; i--)
@@ -66,7 +68,9 @@ public class PopupRanking : PopupBase
 
                 Sprite avatar = GetDogTheme(player.DogTheme);
 
-                ranking.Setup(player, rankIndex, avatar);
+                bool isCurrentPlayer = player.PlayerID == currentPlayerID;
+
+                ranking.Setup(player, rankIndex, avatar, isCurrentPlayer);
 
                 spawnedRankings.Insert(0, ranking);
             }
@@ -76,7 +80,6 @@ public class PopupRanking : PopupBase
 
         Debug.Log("Đã tạo " + spawnedRankings.Count + " bảng xếp hạng!");
     }
-
     private Sprite GetDogTheme(int themeIndex)
     {
         if (dogThemes == null ||

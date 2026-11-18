@@ -31,6 +31,7 @@ public class PopupAdd : PopupBase
     public void SetPopupType(AddType type)
     {
         addType = type;
+        GameManager.Instance.ChangeState(GameManager.GameState.Pause);
 
         switch (addType)
         {
@@ -107,6 +108,8 @@ public class PopupAdd : PopupBase
     }
     public override void DestroyPopup()
     {
+        GameManager.Instance.ChangeState(GameManager.GameState.Playing);
+
         Destroy(gameObject);
     }
 }

@@ -164,6 +164,8 @@ public class PopupTheme : PopupBase
 
     public override void DestroyPopup()
     {
+        AudioManager.Instance.PlaySound("TapButton");
+
         Destroy(gameObject);
     }
 

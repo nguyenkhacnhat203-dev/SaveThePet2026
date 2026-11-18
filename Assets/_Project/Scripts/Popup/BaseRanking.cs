@@ -1,4 +1,3 @@
-
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,8 +14,9 @@ public class BaseRanking : MonoBehaviour
     public TextMeshProUGUI Text_Name;
 
     public Image Avatar;
+    public Image BGblack;
 
-    public void Setup(LeaderboardPlayerData data, int rank, Sprite avatar)
+    public void Setup(LeaderboardPlayerData data, int rank, Sprite avatar, bool isCurrentPlayer)
     {
         if (data == null)
             return;
@@ -44,5 +44,8 @@ public class BaseRanking : MonoBehaviour
 
         if (CopperMedal != null)
             CopperMedal.SetActive(rank == 3);
+
+        if (BGblack != null)
+            BGblack.gameObject.SetActive(isCurrentPlayer);
     }
 }

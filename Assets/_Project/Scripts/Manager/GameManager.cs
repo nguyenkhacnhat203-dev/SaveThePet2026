@@ -21,9 +21,16 @@ public class GameManager : Singleton<GameManager>
     public bool IsLose => currentState == GameState.Lose;
     public bool IsPause => currentState == GameState.Pause;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        RemoteConfigManager.Instance.StartTimer();
+
+    }
     private void Start()
     {
         Application.targetFrameRate = 60;
+        AdsManager.Instance.LoadBanner();
 
         ChangeState(GameState.Playing);
     }
