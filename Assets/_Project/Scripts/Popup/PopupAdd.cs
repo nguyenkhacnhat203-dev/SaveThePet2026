@@ -26,11 +26,14 @@ public class PopupAdd : PopupBase
     [SerializeField] private TMP_Text gemAmountText;
     [SerializeField] private TMP_Text titleText;
 
+    private GameObject targetEffect;
     private bool isRewardPending;
 
-    public void SetPopupType(AddType type)
+    public void SetPopupType(AddType type, GameObject targetEffect)
     {
         addType = type;
+        this.targetEffect = targetEffect;
+
         GameManager.Instance.ChangeState(GameManager.GameState.Pause);
 
         switch (addType)
@@ -85,27 +88,28 @@ public class PopupAdd : PopupBase
         {
             case AddType.Coin:
                 FxManager.Instance.PlayCoin(
-       transform.position,
-       FxManager.Instance.CoinTarget,
-       UiManager.Instance.Coin.gameObject,
-       10,
-       addCoinAmount
-   );
+                    transform.position,
+                    FxManager.Instance.CoinTarget,
+                    targetEffect,
+                    10,
+                    addCoinAmount
+                );
                 break;
 
             case AddType.Gem:
                 FxManager.Instance.PlayGem(
-         transform.position,
-         FxManager.Instance.GemTarget,
-         UiManager.Instance.Gem.gameObject,
-         10,
-         addGemAmount
-     );
+                    transform.position,
+                    FxManager.Instance.GemTarget,
+                    targetEffect,
+                    10,
+                    addGemAmount
+                );
                 break;
         }
-        DestroyPopup();
 
+        DestroyPopup();
     }
+
     public override void DestroyPopup()
     {
         GameManager.Instance.ChangeState(GameManager.GameState.Playing);

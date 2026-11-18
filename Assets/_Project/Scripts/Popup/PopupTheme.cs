@@ -103,11 +103,12 @@ public class PopupTheme : PopupBase
 
     public void ShowPopupCoin()
     {
-        PopupManager.Instance.ShowPopupAddCoin();
+        PopupManager.Instance.ShowPopupAddCoin(Coin.gameObject);
     }
     public void ShowPopupGem()
     {
-        PopupManager.Instance.ShowPopupAddGem();
+        PopupManager.Instance.ShowPopupAddGem(Gem.gameObject);
+
     }
 
     private void SetupQuestion()
@@ -227,12 +228,14 @@ public class PopupTheme : PopupBase
             baseTheme.transform.SetAsFirstSibling();
 
             baseTheme.Setup(
-                item,
-                unlocked,
-                callback,
-                () => manager.UnlockTheme(category, themeIndex),
-                ShowQuestion
-            );
+         item,
+         unlocked,
+         callback,
+         () => manager.UnlockTheme(category, themeIndex),
+         ShowQuestion,
+         ShowPopupCoin,
+         ShowPopupGem
+     );
 
             list.Insert(0, baseTheme);
         }

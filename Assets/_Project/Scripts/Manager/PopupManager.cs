@@ -86,22 +86,21 @@ public class PopupManager : Singleton<PopupManager>
         popupListLevel.gameObject.SetActive(true);
     }
 
-    public void ShowPopupAddCoin()
+    public void ShowPopupAddCoin(GameObject targetEffect)
     {
         AudioManager.Instance.PlaySound("TapButton");
 
         PopupAdd popup = Instantiate(popupAddPrefab, popupParent);
-        popup.SetPopupType(PopupAdd.AddType.Coin);
+        popup.SetPopupType(PopupAdd.AddType.Coin, targetEffect);
     }
 
-    public void ShowPopupAddGem()
+    public void ShowPopupAddGem(GameObject targetEffect)
     {
         AudioManager.Instance.PlaySound("TapButton");
 
         PopupAdd popup = Instantiate(popupAddPrefab, popupParent);
-        popup.SetPopupType(PopupAdd.AddType.Gem);
+        popup.SetPopupType(PopupAdd.AddType.Gem, targetEffect);
     }
-
     public void ShowPopupProfile()
     {
         if (popupProfile == null)

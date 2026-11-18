@@ -63,6 +63,16 @@ public class UiManager : Singleton<UiManager>
             Gem.text = gem.ToString();
     }
 
+    public void ShowPopupAddCoin()
+    {
+        PopupManager.Instance.ShowPopupAddCoin(Coin.gameObject);
+    }
+
+    public void ShowPopupAddGem()
+    {
+        PopupManager.Instance.ShowPopupAddGem(Gem.gameObject);
+    }
+
     public void RePlayLevel()
     {
         if (GameManager.Instance.IsPause || GameManager.Instance.IsWin || GameManager.Instance.IsLose)

@@ -3006,8 +3006,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1957066346}
-        m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
+      - m_Target: {fileID: 1957066344}
+        m_TargetAssemblyTypeName: UiManager, Assembly-CSharp
         m_MethodName: ShowPopupAddGem
         m_Mode: 1
         m_Arguments:
@@ -4162,8 +4162,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1957066346}
-        m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
+      - m_Target: {fileID: 1957066344}
+        m_TargetAssemblyTypeName: UiManager, Assembly-CSharp
         m_MethodName: ShowPopupAddCoin
         m_Mode: 1
         m_Arguments:

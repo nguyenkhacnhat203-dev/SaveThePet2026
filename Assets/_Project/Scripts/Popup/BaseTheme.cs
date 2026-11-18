@@ -39,13 +39,16 @@ public class BaseTheme : MonoBehaviour
     private int buyGem;
 
     private string themeName;
-
+    private Action showPopupCoin;
+    private Action showPopupGem;
     public void Setup(
         ThemeItem data,
         bool unlocked,
         Action<BaseTheme> callback,
         Action onUnlock,
-        Action<string, Action> questionCallback)
+        Action<string, Action> questionCallback,
+        Action popupCoinCallback,
+        Action popupGemCallback)
     {
         if (data == null)
             return;
@@ -65,6 +68,9 @@ public class BaseTheme : MonoBehaviour
         unlockCallback = onUnlock;
         showQuestion = questionCallback;
 
+        showPopupCoin = popupCoinCallback;
+        showPopupGem = popupGemCallback;
+
         buyCoin = data.BuyCoin;
         buyGem = data.BuyGem;
 
@@ -82,7 +88,6 @@ public class BaseTheme : MonoBehaviour
         UpdateUnlockUI();
         SetTick(false);
     }
-
     private void AddThemeButton()
     {
         if (themeButton != null)
@@ -123,7 +128,7 @@ public class BaseTheme : MonoBehaviour
 
         if (resource.Coin < buyCoin)
         {
-            PopupManager.Instance.ShowPopupAddCoin();
+            showPopupCoin?.Invoke();
             return;
         }
 
@@ -142,7 +147,7 @@ public class BaseTheme : MonoBehaviour
 
         if (resource.Gem < buyGem)
         {
-            PopupManager.Instance.ShowPopupAddGem();
+            showPopupGem?.Invoke();
             return;
         }
 
