@@ -72,7 +72,7 @@ public class PopupManager : Singleton<PopupManager>
     {
         if (popupTheme == null)
             popupTheme = Instantiate(popupThemePrefab, popupParent);
-        AudioManager.Instance.PlaySound("TapButton");
+        //AudioManager.Instance.PlaySound("TapButton");
 
         popupTheme.gameObject.SetActive(true);
     }

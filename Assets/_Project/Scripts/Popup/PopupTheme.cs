@@ -206,6 +206,7 @@ public class PopupTheme : PopupBase
 
         if (currentTab == index)
             return;
+        //AudioManager.Instance.PlaySound("TapButton");
 
         currentTab = index;
 
@@ -388,7 +389,7 @@ public class PopupTheme : PopupBase
             return;
 
         SetCurrentPage(GetCurrentPage() - 1);
-
+        AudioManager.Instance.PlaySound("TapButton");
         ClearCurrentList();
         SpawnCurrentTab();
     }
@@ -397,7 +398,7 @@ public class PopupTheme : PopupBase
     {
         if (currentTab < 0 || GetCurrentPage() >= totalPages - 1)
             return;
-
+        AudioManager.Instance.PlaySound("TapButton");
         SetCurrentPage(GetCurrentPage() + 1);
 
         ClearCurrentList();
@@ -526,6 +527,7 @@ public class PopupTheme : PopupBase
 
         if (index < 0)
             return;
+        AudioManager.Instance.PlaySound("TapButton");
 
         foreach (BaseTheme theme in list)
         {
@@ -554,6 +556,8 @@ public class PopupTheme : PopupBase
 
     private void ConfirmPurchase()
     {
+        //AudioManager.Instance.PlaySound("TapButton");
+
         Action callback = confirmPurchase;
 
         confirmPurchase = null;
@@ -566,6 +570,8 @@ public class PopupTheme : PopupBase
 
     private void HideQuestion()
     {
+        AudioManager.Instance.PlaySound("TapButton");
+
         confirmPurchase = null;
 
         if (question != null)
@@ -574,6 +580,7 @@ public class PopupTheme : PopupBase
 
     private void UpdateResourceUI(int coin, int gem)
     {
+
         if (Coin != null)
             Coin.text = coin.ToString();
 

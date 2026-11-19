@@ -129,10 +129,13 @@ public class BaseTheme : MonoBehaviour
         if (resource.Coin < buyCoin)
         {
             showPopupCoin?.Invoke();
+               //AudioManager.Instance.PlaySound("TapButton");
+
             return;
         }
 
         showQuestion?.Invoke(themeName, BuyCoinConfirmed);
+        AudioManager.Instance.PlaySound("TapButton");
     }
 
     private void BuyWithGem()
@@ -147,10 +150,12 @@ public class BaseTheme : MonoBehaviour
 
         if (resource.Gem < buyGem)
         {
+            //AudioManager.Instance.PlaySound("TapButton");
+
             showPopupGem?.Invoke();
             return;
         }
-
+        AudioManager.Instance.PlaySound("TapButton");
         showQuestion?.Invoke(themeName, BuyGemConfirmed);
     }
 
@@ -179,6 +184,8 @@ public class BaseTheme : MonoBehaviour
 
     private void UnlockTheme()
     {
+        AudioManager.Instance.PlaySound("TapButton");
+
         isUnlocked = true;
 
         unlockCallback?.Invoke();
