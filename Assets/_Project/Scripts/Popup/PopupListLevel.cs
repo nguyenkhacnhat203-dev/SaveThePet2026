@@ -137,6 +137,7 @@ public class PopupListLevel : PopupBase
     {
         if (isTransitioning || currentPage <= 0)
             return;
+        AudioManager.Instance.PlaySound("TapButton");
 
         currentPage--;
 
@@ -148,6 +149,7 @@ public class PopupListLevel : PopupBase
     {
         if (isTransitioning || currentPage >= totalPages - 1)
             return;
+        AudioManager.Instance.PlaySound("TapButton");
 
         currentPage++;
 
