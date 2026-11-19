@@ -174,7 +174,6 @@ public class AudioManager : Singleton<AudioManager>
 
         return null;
     }
-
     public void PauseAllSound()
     {
         isSoundPaused = true;

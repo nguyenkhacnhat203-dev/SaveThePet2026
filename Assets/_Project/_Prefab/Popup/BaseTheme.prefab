@@ -881,6 +881,7 @@ GameObject:
   - component: {fileID: 8812885681641384095}
   - component: {fileID: 5808996916334020372}
   - component: {fileID: -4221937552557589812}
+  - component: {fileID: 8207500780434122309}
   m_Layer: 5
   m_Name: BaseTheme
   m_TagString: Untagged
@@ -972,3 +973,18 @@ MonoBehaviour:
   Btn_BuyCoin: {fileID: 5641296175710187242}
   Btn_BuyGem: {fileID: 113239915295478271}
   Img_Theme: {fileID: 5808996916334020372}
+--- !u!114 &8207500780434122309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8148491344606369923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af46ece41205af140a8cefa3ba64cf32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smallScale: 0.85
+  bigScale: 0.95
+  runTime: 1

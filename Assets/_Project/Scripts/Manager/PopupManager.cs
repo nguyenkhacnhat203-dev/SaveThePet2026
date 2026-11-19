@@ -55,7 +55,7 @@ public class PopupManager : Singleton<PopupManager>
 
     public void ShowPopupNextGame()
     {
-        //AudioManager.Instance.PlaySound("TapButton");
+        AudioManager.Instance.PlaySound("TapButton");
 
         PopupNext popup = Instantiate(popupNextPrefab, popupParent);
         popup.SetPopupType(PopupNext.PopupType.Game);

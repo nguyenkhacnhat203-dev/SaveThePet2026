@@ -207,9 +207,10 @@ public class LevelManager : Singleton<LevelManager>
         UiManager.Instance.HideCheckingTime();
         AudioManager.Instance.StopAllSound();
         AudioManager.Instance.PlaySound("X");
+        GameManager.Instance.ChangeState(GameManager.GameState.Lose);
+
         UiManager.Instance.PlayLoseXAnimation(() =>
         {
-            GameManager.Instance.ChangeState(GameManager.GameState.Lose);
             StartCoroutine(ShowPopupFailDelay());
         });
     }

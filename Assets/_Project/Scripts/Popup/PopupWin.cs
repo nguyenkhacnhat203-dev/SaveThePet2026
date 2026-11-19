@@ -201,6 +201,7 @@ public class PopupWin : PopupBase
             UiManager.Instance.CurrentStarCount,
             LevelManager.Instance.CurrentDifficulty
         );
+        AudioManager.Instance.PlaySound("TapButton");
 
         ResourceManager.Instance.AddResource(
             ResourceType.Coin,
@@ -214,6 +215,7 @@ public class PopupWin : PopupBase
     {
         if (AdsManager.Instance == null)
             return;
+        //AudioManager.Instance.PlaySound("TapButton");
 
         if (AdsManager.Instance.IsAdsDisabledByRemoteConfig ||
             IAPManager.Instance.IsRemoveAdsPurchased)

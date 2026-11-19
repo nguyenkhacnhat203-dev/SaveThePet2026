@@ -1,11 +1,12 @@
+
 using UnityEngine;
 
 public class ResponsiveScrollViewAuto : MonoBehaviour
 {
     private const float REF_WIDTH = 1080f;
 
-    public float smallScale = 0.8f;
-    public float bigScale = 0.85f;
+    public float smallScale = 0.85f;
+    public float bigScale = 0.95f;
 
     public enum RunTime
     {
@@ -15,9 +16,6 @@ public class ResponsiveScrollViewAuto : MonoBehaviour
 
     [Header("Run Setting")]
     public RunTime runTime = RunTime.Start;
-
-    private Vector3[] originalScales;
-    private Transform[] childObjects;
 
     private void Awake()
     {
@@ -54,19 +52,6 @@ public class ResponsiveScrollViewAuto : MonoBehaviour
 
     private void ApplyScale(float scale)
     {
-        int childCount = transform.childCount;
-
-        childObjects = new Transform[childCount];
-        originalScales = new Vector3[childCount];
-
-        for (int i = 0; i < childCount; i++)
-        {
-            Transform child = transform.GetChild(i);
-
-            childObjects[i] = child;
-            originalScales[i] = child.localScale;
-
-            child.localScale = originalScales[i] * scale;
-        }
+        transform.localScale = Vector3.one * scale;
     }
 }

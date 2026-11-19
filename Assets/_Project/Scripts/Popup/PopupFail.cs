@@ -97,7 +97,8 @@ public class PopupFail : PopupBase
     {
         int currentLevel = LevelManager.Instance.CurrentLevel;
         int unlockedLevel = LevelData.LoadLevel();
-
+        AudioManager.Instance.StopAllSound();
+        AudioManager.Instance.PlaySound("TapButton");
         if (currentLevel < unlockedLevel)
         {
 

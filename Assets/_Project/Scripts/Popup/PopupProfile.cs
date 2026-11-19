@@ -144,4 +144,13 @@ public class PopupProfile : PopupBase
 
         messageCoroutine = null;
     }
+
+
+    public override void DestroyPopup()
+    {
+        base.DestroyPopup();
+        AudioManager.Instance.PlaySound("TapButton");
+
+    }
+
 }
