@@ -46,11 +46,23 @@ public class PopupTheme : PopupBase
     [SerializeField] private ThemeTab beeTab;
     [SerializeField] private ThemeTab beehiveTab;
 
+    [Header("Pagination")]
+    [SerializeField] private Button Btn_Left;
+    [SerializeField] private Button Btn_Right;
+    [SerializeField] private Image Img_Left;
+    [SerializeField] private Image Img_Right;
+    [SerializeField] private int themesPerPage = 10;
+    [SerializeField] private byte disabledAlpha = 150;
+
     [Header("Purchase Question")]
     [SerializeField] private GameObject question;
     [SerializeField] private TMP_Text questionText;
     [SerializeField] private Button yesButton;
     [SerializeField] private Button noButton;
+
+    [Header("Resources")]
+    [SerializeField] private TMP_Text Coin;
+    [SerializeField] private TMP_Text Gem;
 
     private Action confirmPurchase;
 
@@ -62,19 +74,27 @@ public class PopupTheme : PopupBase
     private readonly List<BaseTheme> spawnedThemesBee = new List<BaseTheme>();
     private readonly List<BaseTheme> spawnedThemesBeehive = new List<BaseTheme>();
 
-    private bool isSpawned;
+    private int currentTab = -1;
 
-    [SerializeField] private TMP_Text Coin;
-    [SerializeField] private TMP_Text Gem;
+    private int dogPage;
+    private int beePage;
+    private int beehivePage;
+
+    private int totalPages;
+
+    private bool isSpawned;
 
     protected override void Start()
     {
         base.Start();
 
+        themesPerPage = Mathf.Max(1, themesPerPage);
+
         SetupQuestion();
-        Spawn();
         SetupTabs();
-        SelectTab(0);
+        SetupPagination();
+
+        Spawn();
     }
 
     protected override void OnEnable()
@@ -101,73 +121,58 @@ public class PopupTheme : PopupBase
         HideQuestion();
     }
 
-    public void ShowPopupCoin()
-    {
-        PopupManager.Instance.ShowPopupAddCoin(Coin.gameObject);
-    }
-    public void ShowPopupGem()
-    {
-        PopupManager.Instance.ShowPopupAddGem(Gem.gameObject);
-
-    }
-
     private void SetupQuestion()
     {
         if (question != null)
             question.SetActive(false);
 
-        yesButton.onClick.RemoveAllListeners();
-        noButton.onClick.RemoveAllListeners();
+        if (yesButton != null)
+        {
+            yesButton.onClick.RemoveAllListeners();
+            yesButton.onClick.AddListener(ConfirmPurchase);
+        }
 
-        yesButton.onClick.AddListener(ConfirmPurchase);
-        noButton.onClick.AddListener(HideQuestion);
+        if (noButton != null)
+        {
+            noButton.onClick.RemoveAllListeners();
+            noButton.onClick.AddListener(HideQuestion);
+        }
     }
 
-    public void ShowQuestion(string themeName, Action callback)
+    private void SetupTabs()
     {
-        if (question == null)
-            return;
+        if (dogTab.Button != null)
+        {
+            dogTab.Button.onClick.RemoveAllListeners();
+            dogTab.Button.onClick.AddListener(() => SelectTab(0));
+        }
 
-        confirmPurchase = callback;
+        if (beeTab.Button != null)
+        {
+            beeTab.Button.onClick.RemoveAllListeners();
+            beeTab.Button.onClick.AddListener(() => SelectTab(1));
+        }
 
-        questionText.text = $"Are you ready to buy a {themeName}?";
-
-        question.SetActive(true);
+        if (beehiveTab.Button != null)
+        {
+            beehiveTab.Button.onClick.RemoveAllListeners();
+            beehiveTab.Button.onClick.AddListener(() => SelectTab(2));
+        }
     }
 
-    private void ConfirmPurchase()
+    private void SetupPagination()
     {
-        Action callback = confirmPurchase;
+        if (Btn_Left != null)
+        {
+            Btn_Left.onClick.RemoveAllListeners();
+            Btn_Left.onClick.AddListener(PreviousPage);
+        }
 
-        confirmPurchase = null;
-
-        question.SetActive(false);
-
-        callback?.Invoke();
-    }
-
-    private void HideQuestion()
-    {
-        confirmPurchase = null;
-
-        if (question != null)
-            question.SetActive(false);
-    }
-
-    private void UpdateResourceUI(int coin, int gem)
-    {
-        if (Coin != null)
-            Coin.text = coin.ToString();
-
-        if (Gem != null)
-            Gem.text = gem.ToString();
-    }
-
-    public override void DestroyPopup()
-    {
-        AudioManager.Instance.PlaySound("TapButton");
-
-        Destroy(gameObject);
+        if (Btn_Right != null)
+        {
+            Btn_Right.onClick.RemoveAllListeners();
+            Btn_Right.onClick.AddListener(NextPage);
+        }
     }
 
     public void Spawn()
@@ -189,93 +194,28 @@ public class PopupTheme : PopupBase
             beehiveTheme.Themes
         );
 
-        SpawnThemes(dogTheme, spawnedThemesDog, ThemeCategory.Dog, SelectThemeDog);
-        SpawnThemes(beeTheme, spawnedThemesBee, ThemeCategory.Bee, SelectThemeBee);
-        SpawnThemes(beehiveTheme, spawnedThemesBeehive, ThemeCategory.Beehive, SelectThemeBeehive);
-
-        RestoreSelectedTheme(spawnedThemesDog, ThemeCategory.Dog, SelectThemeDog);
-        RestoreSelectedTheme(spawnedThemesBee, ThemeCategory.Bee, SelectThemeBee);
-        RestoreSelectedTheme(spawnedThemesBeehive, ThemeCategory.Beehive, SelectThemeBeehive);
-
         isSpawned = true;
-    }
 
-    private void SpawnThemes(
-        ThemeGroup group,
-        List<BaseTheme> list,
-        ThemeCategory category,
-        Action<BaseTheme> callback)
-    {
-        if (group == null || group.Parent == null ||
-            group.Themes == null || group.Themes.Count == 0)
-            return;
-
-        ThemeManager manager = ThemeManager.Instance;
-
-        for (int i = group.Themes.Count - 1; i >= 0; i--)
-        {
-            ThemeItem item = group.Themes[i];
-
-            if (item == null)
-                continue;
-
-            int themeIndex = i;
-
-            bool unlocked = manager.IsUnlocked(category, themeIndex);
-
-            BaseTheme baseTheme = Instantiate(prefab, group.Parent);
-
-            baseTheme.transform.SetAsFirstSibling();
-
-            baseTheme.Setup(
-         item,
-         unlocked,
-         callback,
-         () => manager.UnlockTheme(category, themeIndex),
-         ShowQuestion,
-         ShowPopupCoin,
-         ShowPopupGem
-     );
-
-            list.Insert(0, baseTheme);
-        }
-    }
-
-    private void RestoreSelectedTheme(
-        List<BaseTheme> list,
-        ThemeCategory category,
-        Action<BaseTheme> callback)
-    {
-        if (list == null || list.Count == 0)
-            return;
-
-        int selectedIndex = ThemeManager.Instance.GetSelectedTheme(category);
-
-        if (selectedIndex < 0 || selectedIndex >= list.Count)
-            return;
-
-        BaseTheme selected = list[selectedIndex];
-
-        if (selected != null)
-            callback?.Invoke(selected);
-    }
-
-    private void SetupTabs()
-    {
-        dogTab.Button.onClick.RemoveAllListeners();
-        beeTab.Button.onClick.RemoveAllListeners();
-        beehiveTab.Button.onClick.RemoveAllListeners();
-
-        dogTab.Button.onClick.AddListener(() => SelectTab(0));
-        beeTab.Button.onClick.AddListener(() => SelectTab(1));
-        beehiveTab.Button.onClick.AddListener(() => SelectTab(2));
+        SelectTab(0);
     }
 
     private void SelectTab(int index)
     {
+        if (!isSpawned || index < 0 || index > 2)
+            return;
+
+        if (currentTab == index)
+            return;
+
+        currentTab = index;
+
+        ClearAllSpawnedThemes();
+
         UpdateTab(dogTab, index == 0);
         UpdateTab(beeTab, index == 1);
         UpdateTab(beehiveTab, index == 2);
+
+        SpawnCurrentTab();
     }
 
     private void UpdateTab(ThemeTab tab, bool active)
@@ -290,31 +230,299 @@ public class PopupTheme : PopupBase
             tab.Image.sprite = active ? tab.On : tab.Off;
     }
 
-    private void SelectThemeDog(BaseTheme selectedTheme)
+    private void SpawnCurrentTab()
     {
-        SelectTheme(selectedTheme, spawnedThemesDog, ref currentThemeDog, ThemeCategory.Dog);
+        switch (currentTab)
+        {
+            case 0:
+                SpawnThemes(
+                    dogTheme,
+                    spawnedThemesDog,
+                    ThemeCategory.Dog,
+                    dogPage,
+                    SelectThemeDog
+                );
+                break;
+
+            case 1:
+                SpawnThemes(
+                    beeTheme,
+                    spawnedThemesBee,
+                    ThemeCategory.Bee,
+                    beePage,
+                    SelectThemeBee
+                );
+                break;
+
+            case 2:
+                SpawnThemes(
+                    beehiveTheme,
+                    spawnedThemesBeehive,
+                    ThemeCategory.Beehive,
+                    beehivePage,
+                    SelectThemeBeehive
+                );
+                break;
+        }
+
+        UpdateArrowUI();
     }
 
-    private void SelectThemeBee(BaseTheme selectedTheme)
+
+    private void SpawnThemes(
+        ThemeGroup group,
+        List<BaseTheme> list,
+        ThemeCategory category,
+        int page,
+        Action<BaseTheme, int> callback)
     {
-        SelectTheme(selectedTheme, spawnedThemesBee, ref currentThemeBee, ThemeCategory.Bee);
+        if (group == null || group.Parent == null ||
+            group.Themes == null || group.Themes.Count == 0)
+        {
+            totalPages = 0;
+            return;
+        }
+
+        ThemeManager manager = ThemeManager.Instance;
+
+        int startIndex = page * themesPerPage;
+
+        int endIndex = Mathf.Min(
+            startIndex + themesPerPage,
+            group.Themes.Count
+        );
+
+        totalPages = Mathf.CeilToInt(
+            (float)group.Themes.Count / themesPerPage
+        );
+
+        for (int i = endIndex - 1; i >= startIndex; i--)
+        {
+            ThemeItem item = group.Themes[i];
+
+            if (item == null)
+                continue;
+
+            int themeIndex = i;
+
+            bool unlocked = manager.IsUnlocked(category, themeIndex);
+
+            BaseTheme baseTheme = Instantiate(
+                prefab,
+                group.Parent
+            );
+
+            baseTheme.transform.SetAsFirstSibling();
+
+            baseTheme.Setup(
+                item,
+                unlocked,
+                selected => callback?.Invoke(selected, themeIndex),
+                () => manager.UnlockTheme(category, themeIndex),
+                ShowQuestion,
+                ShowPopupCoin,
+                ShowPopupGem
+            );
+
+            list.Insert(0, baseTheme);
+        }
+
+        RestoreSelectedTheme(
+            list,
+            category,
+            callback,
+            startIndex,
+            endIndex
+        );
     }
 
-    private void SelectThemeBeehive(BaseTheme selectedTheme)
+
+    private void RestoreSelectedTheme(
+        List<BaseTheme> list,
+        ThemeCategory category,
+        Action<BaseTheme, int> callback,
+        int startIndex,
+        int endIndex)
     {
-        SelectTheme(selectedTheme, spawnedThemesBeehive, ref currentThemeBeehive, ThemeCategory.Beehive);
+        int selectedIndex = ThemeManager.Instance.GetSelectedTheme(category);
+
+        if (selectedIndex < startIndex || selectedIndex >= endIndex)
+            return;
+
+        int localIndex = selectedIndex - startIndex;
+
+        if (localIndex < 0 || localIndex >= list.Count)
+            return;
+
+        BaseTheme selected = list[localIndex];
+
+        if (selected != null)
+            callback?.Invoke(selected, selectedIndex);
+    }
+
+    private void ClearAllSpawnedThemes()
+    {
+        ClearList(spawnedThemesDog);
+        ClearList(spawnedThemesBee);
+        ClearList(spawnedThemesBeehive);
+
+        currentThemeDog = null;
+        currentThemeBee = null;
+        currentThemeBeehive = null;
+    }
+
+    private void ClearList(List<BaseTheme> list)
+    {
+        foreach (BaseTheme theme in list)
+        {
+            if (theme != null)
+                Destroy(theme.gameObject);
+        }
+
+        list.Clear();
+    }
+
+    private void PreviousPage()
+    {
+        if (currentTab < 0 || GetCurrentPage() <= 0)
+            return;
+
+        SetCurrentPage(GetCurrentPage() - 1);
+
+        ClearCurrentList();
+        SpawnCurrentTab();
+    }
+
+    private void NextPage()
+    {
+        if (currentTab < 0 || GetCurrentPage() >= totalPages - 1)
+            return;
+
+        SetCurrentPage(GetCurrentPage() + 1);
+
+        ClearCurrentList();
+        SpawnCurrentTab();
+    }
+
+    private int GetCurrentPage()
+    {
+        switch (currentTab)
+        {
+            case 0: return dogPage;
+            case 1: return beePage;
+            case 2: return beehivePage;
+            default: return 0;
+        }
+    }
+
+    private void SetCurrentPage(int page)
+    {
+        switch (currentTab)
+        {
+            case 0:
+                dogPage = page;
+                break;
+
+            case 1:
+                beePage = page;
+                break;
+
+            case 2:
+                beehivePage = page;
+                break;
+        }
+    }
+
+    private void ClearCurrentList()
+    {
+        switch (currentTab)
+        {
+            case 0:
+                ClearList(spawnedThemesDog);
+                currentThemeDog = null;
+                break;
+
+            case 1:
+                ClearList(spawnedThemesBee);
+                currentThemeBee = null;
+                break;
+
+            case 2:
+                ClearList(spawnedThemesBeehive);
+                currentThemeBeehive = null;
+                break;
+        }
+    }
+
+    private void UpdateArrowUI()
+    {
+        bool canGoLeft = GetCurrentPage() > 0;
+        bool canGoRight = GetCurrentPage() < totalPages - 1;
+
+        UpdateArrowAlpha(Img_Left, canGoLeft);
+        UpdateArrowAlpha(Img_Right, canGoRight);
+
+        if (Btn_Left != null)
+            Btn_Left.interactable = canGoLeft;
+
+        if (Btn_Right != null)
+            Btn_Right.interactable = canGoRight;
+    }
+
+    private void UpdateArrowAlpha(Image image, bool active)
+    {
+        if (image == null)
+            return;
+
+        Color color = image.color;
+
+        color.a = active ? 1f : disabledAlpha / 255f;
+
+        image.color = color;
+    }
+
+    private void SelectThemeDog(BaseTheme selectedTheme, int index)
+    {
+        SelectTheme(
+            selectedTheme,
+            spawnedThemesDog,
+            ref currentThemeDog,
+            ThemeCategory.Dog,
+            index
+        );
+    }
+
+    private void SelectThemeBee(BaseTheme selectedTheme, int index)
+    {
+        SelectTheme(
+            selectedTheme,
+            spawnedThemesBee,
+            ref currentThemeBee,
+            ThemeCategory.Bee,
+            index
+        );
+    }
+
+    private void SelectThemeBeehive(BaseTheme selectedTheme, int index)
+    {
+        SelectTheme(
+            selectedTheme,
+            spawnedThemesBeehive,
+            ref currentThemeBeehive,
+            ThemeCategory.Beehive,
+            index
+        );
     }
 
     private void SelectTheme(
         BaseTheme selectedTheme,
         List<BaseTheme> list,
         ref BaseTheme currentTheme,
-        ThemeCategory category)
+        ThemeCategory category,
+        int index)
     {
         if (selectedTheme == null || currentTheme == selectedTheme)
             return;
-
-        int index = list.IndexOf(selectedTheme);
 
         if (index < 0)
             return;
@@ -329,5 +537,117 @@ public class PopupTheme : PopupBase
         currentTheme.SetTick(true);
 
         ThemeManager.Instance.SetSelectedTheme(category, index);
+    }
+
+    public void ShowQuestion(string themeName, Action callback)
+    {
+        if (question == null)
+            return;
+
+        confirmPurchase = callback;
+
+        if (questionText != null)
+            questionText.text = $"Are you ready to buy a {themeName}?";
+
+        question.SetActive(true);
+    }
+
+    private void ConfirmPurchase()
+    {
+        Action callback = confirmPurchase;
+
+        confirmPurchase = null;
+
+        if (question != null)
+            question.SetActive(false);
+
+        callback?.Invoke();
+    }
+
+    private void HideQuestion()
+    {
+        confirmPurchase = null;
+
+        if (question != null)
+            question.SetActive(false);
+    }
+
+    private void UpdateResourceUI(int coin, int gem)
+    {
+        if (Coin != null)
+            Coin.text = coin.ToString();
+
+        if (Gem != null)
+            Gem.text = gem.ToString();
+    }
+
+    public void ShowPopupCoin()
+    {
+        if (Coin != null)
+            PopupManager.Instance.ShowPopupAddCoin(Coin.gameObject);
+    }
+
+    public void ShowPopupGem()
+    {
+        if (Gem != null)
+            PopupManager.Instance.ShowPopupAddGem(Gem.gameObject);
+    }
+
+    public void Refresh()
+    {
+        ClearAllSpawnedThemes();
+
+        dogPage = Mathf.Clamp(
+            dogPage, 0,
+            Mathf.Max(0, GetTotalPages(dogTheme) - 1)
+        );
+
+        beePage = Mathf.Clamp(
+            beePage, 0,
+            Mathf.Max(0, GetTotalPages(beeTheme) - 1)
+        );
+
+        beehivePage = Mathf.Clamp(
+            beehivePage, 0,
+            Mathf.Max(0, GetTotalPages(beehiveTheme) - 1)
+        );
+
+        if (currentTab >= 0)
+            SpawnCurrentTab();
+    }
+
+    private int GetTotalPages(ThemeGroup group)
+    {
+        if (group == null || group.Themes == null)
+            return 0;
+
+        return Mathf.CeilToInt(
+            (float)group.Themes.Count / Mathf.Max(1, themesPerPage)
+        );
+    }
+
+    public override void DestroyPopup()
+    {
+        AudioManager.Instance.PlaySound("TapButton");
+
+        Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (dogTab.Button != null)
+            dogTab.Button.onClick.RemoveAllListeners();
+
+        if (beeTab.Button != null)
+            beeTab.Button.onClick.RemoveAllListeners();
+
+        if (beehiveTab.Button != null)
+            beehiveTab.Button.onClick.RemoveAllListeners();
+
+        if (Btn_Left != null)
+            Btn_Left.onClick.RemoveListener(PreviousPage);
+
+        if (Btn_Right != null)
+            Btn_Right.onClick.RemoveListener(NextPage);
     }
 }

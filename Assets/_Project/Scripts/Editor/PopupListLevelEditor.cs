@@ -9,8 +9,16 @@ public class PopupListLevelEditor : Editor
     private SerializedProperty levelGroup;
     private SerializedProperty parent;
     private SerializedProperty levels;
+
     private SerializedProperty blackOverlay;
     private SerializedProperty fadeDuration;
+
+    private SerializedProperty btnLeft;
+    private SerializedProperty btnRight;
+    private SerializedProperty imgLeft;
+    private SerializedProperty imgRight;
+    private SerializedProperty levelsPerPage;
+    private SerializedProperty disabledAlpha;
 
     private void OnEnable()
     {
@@ -22,6 +30,14 @@ public class PopupListLevelEditor : Editor
 
         blackOverlay = serializedObject.FindProperty("blackOverlay");
         fadeDuration = serializedObject.FindProperty("fadeDuration");
+
+        btnLeft = serializedObject.FindProperty("Btn_Left");
+        btnRight = serializedObject.FindProperty("Btn_Right");
+        imgLeft = serializedObject.FindProperty("Img_Left");
+        imgRight = serializedObject.FindProperty("Img_Right");
+
+        levelsPerPage = serializedObject.FindProperty("levelsPerPage");
+        disabledAlpha = serializedObject.FindProperty("disabledAlpha");
     }
 
     public override void OnInspectorGUI()
@@ -29,11 +45,29 @@ public class PopupListLevelEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.PropertyField(prefab);
+
         EditorGUILayout.Space(10);
 
         EditorGUILayout.LabelField("Replay Transition", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(blackOverlay);
         EditorGUILayout.PropertyField(fadeDuration);
+
+        EditorGUILayout.Space(10);
+
+        EditorGUILayout.LabelField("Pagination", EditorStyles.boldLabel);
+
+        EditorGUILayout.PropertyField(btnLeft, new GUIContent("Button Left"));
+        EditorGUILayout.PropertyField(btnRight, new GUIContent("Button Right"));
+
+        EditorGUILayout.Space(5);
+
+        EditorGUILayout.PropertyField(imgLeft, new GUIContent("Image Left"));
+        EditorGUILayout.PropertyField(imgRight, new GUIContent("Image Right"));
+
+        EditorGUILayout.Space(5);
+
+        EditorGUILayout.PropertyField(levelsPerPage, new GUIContent("Levels Per Page"));
+        EditorGUILayout.PropertyField(disabledAlpha, new GUIContent("Disabled Alpha"));
 
         EditorGUILayout.Space(10);
 

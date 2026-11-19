@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90ee97c2fbaffc647930fbeec721e0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficulty: 1
+  difficulty: 0
   bonnusCoin: 60
 --- !u!1 &4283057683116056174
 GameObject:
