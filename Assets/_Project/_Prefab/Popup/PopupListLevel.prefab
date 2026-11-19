@@ -1074,17 +1074,14 @@ MonoBehaviour:
     - LevelImage: {fileID: 21300000, guid: 6ff9974481dc5d649bfc06e091a7527a, type: 3}
     - LevelImage: {fileID: 21300000, guid: c8cddf02ed5cb7448bf51ed9d03b3282, type: 3}
     - LevelImage: {fileID: 21300000, guid: 0f20b0b5a38649f4f926c385a22741c8, type: 3}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
-    - LevelImage: {fileID: 0}
+    - LevelImage: {fileID: 21300000, guid: a639bd23a5970364bb3d5908bb67d284, type: 3}
+    - LevelImage: {fileID: 21300000, guid: 76f4d84b1fc90974ca8c2a6f316aa7b1, type: 3}
+    - LevelImage: {fileID: 21300000, guid: afdbc332100577742a6a58fbc2c8968c, type: 3}
+    - LevelImage: {fileID: 21300000, guid: d25f38bd450d1ae4db89143bf7516d75, type: 3}
+    - LevelImage: {fileID: 21300000, guid: 0954e4ef938d74c4186f86a7ea91ff1c, type: 3}
+    - LevelImage: {fileID: 21300000, guid: 33a387a6c86b2834bb1ff44dee481a71, type: 3}
+    - LevelImage: {fileID: 21300000, guid: 69e4e927de692d14cad49282e27043ea, type: 3}
+    - LevelImage: {fileID: 21300000, guid: 8f08035277e68854ab68bb4a84d0fa2f, type: 3}
   Btn_Left: {fileID: 3814999062535074136}
   Btn_Right: {fileID: 1316866306966649283}
   Img_Left: {fileID: 1585506312801502368}

@@ -6013,6 +6013,9 @@ MonoBehaviour:
   - {fileID: 2537001039671266776, guid: bef47e2b61f8af740a20378039179e8a, type: 3}
   - {fileID: 2537001039671266776, guid: b1e17d289dd98534d84b0e222550c8a6, type: 3}
   - {fileID: 2537001039671266776, guid: 30c99821474e4054eaf54cd19943ff4a, type: 3}
+  - {fileID: 2537001039671266776, guid: 4dcc04ec76359c74e9455b62fe2436ec, type: 3}
+  - {fileID: 2537001039671266776, guid: 30ad5cfbbf4b6e94fa71f4b1b12b6e44, type: 3}
+  - {fileID: 2537001039671266776, guid: 999d6ac6cf3051449a6c550444b29bfd, type: 3}
   levelParent: {fileID: 2764844777986849380}
   checkingDuration: 5
   currentLevelSetup: {fileID: 0}
