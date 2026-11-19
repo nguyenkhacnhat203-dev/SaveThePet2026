@@ -72,6 +72,9 @@ TagManager:
   - name: Dog
     uniqueID: 4092129491
     locked: 0
+  - name: Tutorial
+    uniqueID: 1782241663
+    locked: 0
   - name: UiManager
     uniqueID: 2759263645
     locked: 0

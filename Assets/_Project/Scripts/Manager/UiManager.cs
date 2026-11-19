@@ -37,7 +37,7 @@ public class UiManager : Singleton<UiManager>
     private void Start()
     {
         ResetLevelUI();
-        ShowHomeUi();
+        //ShowHomeUi();
 
         UpdateResourceUI(
             ResourceManager.Instance.Coin,

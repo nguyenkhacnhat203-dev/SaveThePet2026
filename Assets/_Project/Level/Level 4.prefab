@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   difficulty: 0
-  bonnusCoin: 70
+  bonnusCoin: 50
 --- !u!1 &4283057683116056174
 GameObject:
   m_ObjectHideFlags: 0

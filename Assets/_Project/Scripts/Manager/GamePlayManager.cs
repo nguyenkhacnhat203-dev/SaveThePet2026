@@ -5,7 +5,7 @@ public class GamePlayManager : Singleton<GamePlayManager>
 {
     [SerializeField] private DrawWall drawWall;
     [SerializeField] private BeeSpawn[] beeSpawners;
-
+    [SerializeField] private TutorialBar tutorialBar;
     private bool isInputLocked;
 
     private void Start()
@@ -81,6 +81,11 @@ public class GamePlayManager : Singleton<GamePlayManager>
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (tutorialBar != null)
+            {
+                tutorialBar.HideTutorial();
+            }
+
             drawWall.StartDrawing(Input.mousePosition);
             return;
         }
